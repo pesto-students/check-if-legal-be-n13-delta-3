@@ -1,8 +1,17 @@
 {
-    "printWidth": 150,
-    "tabWidth": 2,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "semi": true,
-    "arrowParens": "avoid"
+	"trailingComma": "all",
+	"tabWidth": 4,
+	"useTabs": true,
+	"semi": false,
+	"singleQuote": false,
+	"printWidth": 90,
+	"endOfLine": "lf",
+	"overrides": [
+		{
+			"files": ["*.json", "*.yml", "*.**rc"],
+			"options": {
+				"tabWidth": 2
+			}
+		}
+	]
 }
