@@ -1,10 +1,20 @@
+import cors from "cors"
 import express from "express"
+import helmet from "helmet"
+import hpp from "hpp"
 import configs from "../configs"
+import { ServerInstance } from "./define/ServerInstance"
 
-const server = express()
+const server = new ServerInstance(configs.server.port)
 
-server.listen(configs.server.port, () => {
-	console.log(`Server is running on port: ${configs.server.port}`)
+server.use(cors())
+server.use(helmet())
+server.use(hpp())
+server.use(express.json())
+server.use(express.urlencoded({ extended: true }))
+
+server.listen().then((port) => {
+	console.log(`Server listening on port: ${port}`)
 })
 
 export default server
