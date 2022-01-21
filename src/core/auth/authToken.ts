@@ -10,7 +10,7 @@ const expiresIn = "12h"
 
 export interface IAuthPayload {
 	role: AuthRole
-	id: string
+	id: number
 }
 
 export function createAuthToken(payload: IAuthPayload) {
