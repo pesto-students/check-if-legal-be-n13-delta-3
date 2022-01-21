@@ -8,6 +8,10 @@ export default {
 		port: (process.env.SERVER_PORT && +process.env.SERVER_PORT) || 3000,
 		name: process.env.SERVER_NAME || "server_name",
 	},
-	databaseUrl:
-		process.env.DATABASE_URL ?? "postgresql://postgres@localhost:5432/postgres",
+	database: {
+		url: process.env.DATABASE_URL ?? "postgresql://postgres@localhost:5432/postgres",
+	},
+	jwt: {
+		secret: process.env.JWT_SECRET || "secret",
+	},
 }

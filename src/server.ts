@@ -2,7 +2,7 @@ import cors from "cors"
 import express from "express"
 import helmet from "helmet"
 import hpp from "hpp"
-import configs from "./configs"
+import configs from "./core/configs"
 import apis from "./apis"
 import { HttpServer } from "./core/http/HttpServer"
 

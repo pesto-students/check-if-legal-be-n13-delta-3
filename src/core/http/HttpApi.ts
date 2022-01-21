@@ -1,5 +1,5 @@
 import { Request, RequestHandler, Response } from "express"
-import configs from "../../configs"
+import configs from "../configs"
 import { HttpMethod, HttpStatusCode } from "./enums"
 import { HttpError, isHttpError } from "./HttpError"
 import { HttpResponse } from "./HttpResponse"
