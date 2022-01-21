@@ -1,1 +1,1 @@
-export * from "./controller/server"
+export * from "./server"

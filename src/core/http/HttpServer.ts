@@ -1,7 +1,7 @@
 import express, { Express, RequestHandler } from "express"
 import { HttpApi } from "./HttpApi"
 
-export class ServerInstance {
+export class HttpServer {
 	server: Express
 	port: number
 
