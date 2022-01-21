@@ -14,14 +14,10 @@ export const apiAdminLogin = new HttpApi({
 		)
 
 		const [admin] = await listAdmin({ filter: { username } })
-		if (!admin) {
-			throw invalidCredentialsError
-		}
+		if (!admin) throw invalidCredentialsError
 
-		const isPasswordValid = verifyHash(password, admin.hashedPassword)
-		if (!isPasswordValid) {
-			throw invalidCredentialsError
-		}
+		const isPasswordValid = await verifyHash(password, admin.hashedPassword)
+		if (!isPasswordValid) throw invalidCredentialsError
 
 		const token = createAuthToken({ role: AuthRole.ADMIN, id: admin.id })
 		return { token }
