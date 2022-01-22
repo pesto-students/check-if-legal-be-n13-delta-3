@@ -5,7 +5,7 @@ export async function listCity({
 	include,
 }: {
 	filter?: { id?: number; stateId?: number }
-	include?: { state: true }
+	include?: { state?: boolean }
 } = {}): Promise<City[]> {
 	const prisma = new PrismaClient()
 	return await prisma.city.findMany({
