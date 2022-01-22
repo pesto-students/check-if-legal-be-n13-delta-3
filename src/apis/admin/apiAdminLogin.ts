@@ -2,7 +2,7 @@ import { createAuthToken } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { verifyHash } from "../../core/helpers/hash"
 import { HttpApi, HttpMethod, UnprocessableEntityError } from "../../core/http"
-import { listAdmin } from "../../services/admin/listAdminV1"
+import { listAdmin } from "../../services/admin/listAdmin"
 
 export const apiAdminLogin = new HttpApi({
 	method: HttpMethod.POST,

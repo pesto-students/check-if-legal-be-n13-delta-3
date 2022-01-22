@@ -57,7 +57,7 @@ model Lawyer {
     averageRating     Float        @default(0)
     ratingPoints      Int          @default(0)
     googleOAuth       GoogleOAuth?
-    services          Service[]
+    offerings         Offering[]
     reviews           Review[]
     banks             LawyerBank[]
 }
@@ -88,21 +88,21 @@ model City {
 }
 
 model Language {
-    id       Int       @id @default(autoincrement())
-    name     String    @unique @db.VarChar(50)
-    services Service[]
-    reviews  Review[]
+    id        Int        @id @default(autoincrement())
+    name      String     @unique @db.VarChar(50)
+    offerings Offering[]
+    reviews   Review[]
 }
 
 model PaperType {
-    id          Int       @id @default(autoincrement())
-    name        String    @unique @db.VarChar(100)
-    isSuspended Boolean   @default(false)
-    services    Service[]
+    id          Int        @id @default(autoincrement())
+    name        String     @unique @db.VarChar(100)
+    isSuspended Boolean    @default(false)
+    offerings   Offering[]
     reviews     Review[]
 }
 
-model Service {
+model Offering {
     id                  Int       @id @default(autoincrement())
     createdAt           DateTime  @default(now())
     updatedAt           DateTime  @updatedAt
