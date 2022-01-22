@@ -54,6 +54,7 @@ model Lawyer {
     verifiedByAdminId Int?
     verifiedByAdmin   Admin?       @relation(fields: [verifiedByAdminId], references: [id])
     isSuspended       Boolean      @default(false)
+    isActive          Boolean      @default(true)
     averageRating     Float        @default(0)
     ratingPoints      Int          @default(0)
     googleOAuth       GoogleOAuth?
@@ -114,6 +115,7 @@ model Offering {
     language            Language  @relation(fields: [languageId], references: [id])
     price               Float
     expectedTimeInHours Int
+    isActive            Boolean   @default(true)
     description         String?
 }
 
