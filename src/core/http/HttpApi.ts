@@ -77,7 +77,8 @@ function sendErrorResponse(
 	err: unknown,
 	options: { hideErrorStack?: boolean } = {},
 ) {
-	let data: { message: string; stack?: string } = {
+	let data: { name: string; message: string; stack?: string } = {
+		name: "InternalServerError",
 		message: "Something went wrong",
 	}
 	let statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR
@@ -87,11 +88,13 @@ function sendErrorResponse(
 
 		statusCode = httpError.httpStatusCode
 		data = {
+			name: httpError.name,
 			message: httpError.message,
 			stack: (!options.hideErrorStack && httpError.stack) || undefined,
 		}
 	} else if (err instanceof Error) {
-		data = data = {
+		data = {
+			name: err.name,
 			message: err.message,
 			stack: (!options.hideErrorStack && err.stack) || undefined,
 		}
