@@ -1,20 +1,17 @@
+import { z } from "zod"
 import { createAuthToken } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { verifyHash } from "../../core/helpers/hash"
 import { HttpApi, HttpMethod, UnprocessableEntityError } from "../../core/http"
-import { listAdmin } from "../../services/admin/listAdmin"
-import { z } from "zod"
 import { parseSchema } from "../../core/parseSchema"
+import { listAdmin } from "../../services/admin/listAdmin"
 
 export const apiAdminLogin = new HttpApi({
 	method: HttpMethod.POST,
 	endpoint: "/admin/login",
 	handler: async (req) => {
 		const bodySchema = z
-			.object({
-				username: z.string(),
-				password: z.string(),
-			})
+			.object({ username: z.string(), password: z.string() })
 			.strict()
 		const { username, password } = await parseSchema(bodySchema, req.body)
 

@@ -1,6 +1,8 @@
+import { z } from "zod"
 import { userAuth } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { HttpApi, HttpMethod } from "../../core/http"
+import { parseSchema } from "../../core/parseSchema"
 import { listOffering } from "../../services/offering/listOffering"
 
 export const apiUserOfferingList = new HttpApi({
@@ -8,12 +10,15 @@ export const apiUserOfferingList = new HttpApi({
 	endpoint: "/user/offering/list",
 	handler: async (req) => {
 		userAuth(req, [AuthRole.USER])
-		const body = req.body as {
-			paperTypeId: number
-			cityId: number
-			languageId: number
-			maxPrice?: number
-		}
+		const bodySchema = z
+			.object({
+				paperTypeId: z.number().int(),
+				cityId: z.number().int(),
+				languageId: z.number().int(),
+				maxPrice: z.number().int().optional(),
+			})
+			.strict()
+		const body = await parseSchema(bodySchema, req.body)
 
 		const offerings = await listOffering({
 			filter: { ...body, isActive: true },

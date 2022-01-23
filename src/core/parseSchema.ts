@@ -6,12 +6,9 @@ export async function parseSchema<T extends unknown>(
 	data: unknown,
 ): Promise<T> {
 	try {
-		const parsed = await schema.parseAsync(data)
-		return parsed
+		return await schema.parseAsync(data)
 	} catch (err) {
-		if (err instanceof z.ZodError) {
-			throw new BadRequestError(err.message, err.stack)
-		}
+		if (err instanceof z.ZodError) throw new BadRequestError(err.message, err.stack)
 		throw err
 	}
 }
