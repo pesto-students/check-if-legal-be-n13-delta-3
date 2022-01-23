@@ -6,8 +6,5 @@ export async function listAdmin({
 	filter?: { id?: number; username?: string }
 } = {}): Promise<Admin[]> {
 	const prisma = new PrismaClient()
-	return await prisma.admin.findMany({
-		orderBy: { username: "asc" },
-		where: { ...filter },
-	})
+	return await prisma.admin.findMany({ orderBy: { username: "asc" }, where: filter })
 }
