@@ -1,40 +1,40 @@
 import { Request, RequestHandler, Response } from "express"
+import { z } from "zod"
 import configs from "../configs"
 import { HttpMethod, HttpStatusCode } from "./enums"
 import { HttpError, isHttpError } from "./HttpError"
 import { HttpResponse } from "./HttpResponse"
 
-interface IHttpApiConstructorParameters {
+type IHandler<T> = (payload: { req: Request; body: T }) => Promise<HttpResponse | any>
+interface IHttpApiConstructorParameters<T extends unknown> {
 	method: HttpMethod
 	endpoint: string
+	bodySchema?: z.Schema<T>
 	options?: IOptions
 	middlewares?: RequestHandler[]
-	handler: IHandler
+	handler: IHandler<T>
 }
-
-type IHandler = (req: Request) => Promise<HttpResponse | any>
 
 interface IOptions {
 	hideErrorStack?: boolean
-	formData?: {
-		autoClean?: boolean
-		maxFilesSize?: number
-		uploadDir?: string
-	}
+	formData?: { autoClean?: boolean; maxFilesSize?: number; uploadDir?: string }
 }
 
-export class HttpApi {
+export class HttpApi<T extends unknown = unknown> {
 	method: HttpMethod
 	endpoint: string
+	bodySchema: z.Schema<T>
 	options: IOptions
 	middlewares: RequestHandler[]
-	handler: IHandler
+	handler: IHandler<T>
 
 	callApi: RequestHandler
 
-	constructor(payload: IHttpApiConstructorParameters) {
+	constructor(payload: IHttpApiConstructorParameters<T>) {
 		this.method = payload.method
 		this.endpoint = payload.endpoint
+		// @ts-ignore
+		this.bodySchema = payload.bodySchema ?? z.object({}).strict()
 
 		const defaultOptions: IOptions = {
 			hideErrorStack: configs.server.environment === "production",
@@ -42,13 +42,13 @@ export class HttpApi {
 
 		this.options = payload.options ?? defaultOptions
 		this.handler = payload.handler
-
 		this.middlewares = payload.middlewares ?? []
 
 		this.callApi = async (req, res) => {
 			try {
 				if (res.headersSent) return
-				const responseObject = await this.handler(req)
+				const body = await this.bodySchema.parseAsync(req.body)
+				const responseObject = await this.handler({ req, body })
 				sendJsonResponse(res, responseObject)
 			} catch (err) {
 				sendErrorResponse(res, err)
@@ -77,7 +77,8 @@ function sendErrorResponse(
 	err: unknown,
 	options: { hideErrorStack?: boolean } = {},
 ) {
-	let data: { message: string; stack?: string } = {
+	let data: { name: string; message: string; stack?: string } = {
+		name: "InternalServerError",
 		message: "Something went wrong",
 	}
 	let statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR
@@ -87,11 +88,13 @@ function sendErrorResponse(
 
 		statusCode = httpError.httpStatusCode
 		data = {
+			name: httpError.name,
 			message: httpError.message,
 			stack: (!options.hideErrorStack && httpError.stack) || undefined,
 		}
 	} else if (err instanceof Error) {
-		data = data = {
+		data = {
+			name: err.name,
 			message: err.message,
 			stack: (!options.hideErrorStack && err.stack) || undefined,
 		}

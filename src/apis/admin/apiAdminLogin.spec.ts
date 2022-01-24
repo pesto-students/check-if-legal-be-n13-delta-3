@@ -17,6 +17,29 @@ describe(`API: ${endpoint}`, () => {
 		admin = await generateAdmin()
 	})
 
+	/**
+	 * Validation
+	 */
+	it(`Validation: Fail without username`, async () => {
+		await httpApiRequest({
+			method,
+			endpoint,
+			body: { password: admin.password },
+			expectedStatusCode: HttpStatusCode.BAD_REQUEST,
+		})
+	})
+	it(`Validation: Fail without password`, async () => {
+		await httpApiRequest({
+			method,
+			endpoint,
+			body: { username: admin.username },
+			expectedStatusCode: HttpStatusCode.BAD_REQUEST,
+		})
+	})
+
+	/**
+	 * Fail cases
+	 */
 	it(`Fail with wrong username`, async () => {
 		const username = randUserName()
 		const password = admin.password
@@ -41,6 +64,9 @@ describe(`API: ${endpoint}`, () => {
 		})
 	})
 
+	/**
+	 * Success cases
+	 */
 	it(`Success with right credentials`, async () => {
 		const { username, password } = admin
 

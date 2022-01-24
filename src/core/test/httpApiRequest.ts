@@ -24,7 +24,7 @@ export async function httpApiRequest({
 	const response = await executeHttpRequest(client)
 	expect(response.status).equal(
 		expectedStatusCode,
-		`${response.body?.error?.message}  ${response.body?.error?.stack}`,
+		`${response.body?.name}: ${response.body?.message}  ${response.body?.stack}`,
 	)
 
 	return response.body

@@ -1,3 +1,4 @@
+import { z } from "zod"
 import { createAuthToken } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { verifyHash } from "../../core/helpers/hash"
@@ -7,8 +8,8 @@ import { listAdmin } from "../../services/admin/listAdmin"
 export const apiAdminLogin = new HttpApi({
 	method: HttpMethod.POST,
 	endpoint: "/admin/login",
-	handler: async (req) => {
-		const { username, password } = req.body as { username: string; password: string }
+	bodySchema: z.object({ username: z.string(), password: z.string() }).strict(),
+	handler: async ({ body: { username, password } }) => {
 		const invalidCredentialsError = new UnprocessableEntityError(
 			"Invalid username or password",
 		)
