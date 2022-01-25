@@ -86,6 +86,7 @@ model City {
     stateId Int
     state   State    @relation(fields: [stateId], references: [id])
     lawyers Lawyer[]
+    review  Review[]
 }
 
 model Language {
@@ -131,6 +132,8 @@ model Review {
     paperType   PaperType        @relation(fields: [paperTypeId], references: [id])
     languageId  Int
     language    Language         @relation(fields: [languageId], references: [id])
+    cityId      Int
+    city        City             @relation(fields: [cityId], references: [id])
     userNote    String?
     price       Float
     status      ReviewStatus     @default(INTIAL)
