@@ -19,7 +19,7 @@ export const apiUserOfferingList = new HttpApi({
 		userAuth(req, [AuthRole.USER])
 
 		const offerings = await listOffering({
-			filter: { ...body, isActive: true, isLawyerActive: true },
+			filter: { ...body, isActive: true, isLawyerAvailable: true },
 			include: { lawyer: true },
 		})
 		return offerings

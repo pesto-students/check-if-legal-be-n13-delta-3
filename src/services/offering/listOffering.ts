@@ -6,7 +6,7 @@ export async function listOffering({
 		id,
 		cityId,
 		lawyerId,
-		isLawyerActive,
+		isLawyerAvailable,
 		languageId,
 		maxPrice,
 		paperTypeId,
@@ -17,7 +17,7 @@ export async function listOffering({
 	filter?: {
 		id?: number
 		lawyerId?: number
-		isLawyerActive?: boolean
+		isLawyerAvailable?: boolean
 		paperTypeId?: number
 		languageId?: number
 		cityId?: number
@@ -39,7 +39,7 @@ export async function listOffering({
 			...(_.isBoolean(isActive) && { isActive }),
 			lawyer: {
 				isSuspended: false,
-				...(_.isBoolean(isLawyerActive) && { isActive: isLawyerActive }),
+				...(_.isBoolean(isLawyerAvailable) && { isAvailable: isLawyerAvailable }),
 				...(cityId && { cityId }),
 			},
 		},
