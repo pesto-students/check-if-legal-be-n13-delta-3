@@ -1,5 +1,6 @@
-import { Offering, PrismaClient } from "@prisma/client"
+import { Offering } from "@prisma/client"
 import _ from "lodash"
+import { prisma } from "../../core/prisma"
 
 export async function listOffering({
 	filter: {
@@ -26,7 +27,6 @@ export async function listOffering({
 	}
 	include?: { lawyer?: boolean; paperType?: boolean }
 } = {}): Promise<Offering[]> {
-	const prisma = new PrismaClient()
 	return await prisma.offering.findMany({
 		where: {
 			...(id && { id }),

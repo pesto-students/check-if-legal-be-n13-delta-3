@@ -1,3 +1,3 @@
-import { apiReviewAdd } from "./apiReviewAdd"
+import { apiReviewCreate } from "./apiReviewCreate"
 
-export default [apiReviewAdd]
+export default [apiReviewCreate]

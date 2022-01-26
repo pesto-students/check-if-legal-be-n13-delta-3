@@ -1,5 +1,6 @@
-import { Offering, PrismaClient } from "@prisma/client"
+import { Offering } from "@prisma/client"
 import { UnprocessableEntityError } from "../../core/http"
+import { prisma } from "../../core/prisma"
 
 export async function createOffering(payload: {
 	lawyerId: number
@@ -10,8 +11,6 @@ export async function createOffering(payload: {
 	description?: string
 	isAvailable?: boolean
 }): Promise<Offering> {
-	const prisma = new PrismaClient()
-
 	const lawyer = await prisma.lawyer.findFirst({ where: { id: payload.lawyerId } })
 	if (!lawyer) throw new UnprocessableEntityError("Invalid lawyer")
 	if (!lawyer.isVerified) throw new UnprocessableEntityError("Lawyer is not verified")

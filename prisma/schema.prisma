@@ -134,8 +134,8 @@ model Review {
     city        City             @relation(fields: [cityId], references: [id])
     userNote    String?
     price       Float
-    status      ReviewStatus     @default(INTIAL)
-    feedback    ReviewFeedback[]
+    status      ReviewStatus     @default(INITIAL)
+    feedbacks   ReviewFeedback[]
     rating      ReviewRating?
 }
 
@@ -162,7 +162,7 @@ model ReviewFeedback {
 }
 
 enum ReviewStatus {
-    INTIAL
+    INITIAL
     WAITING_FOR_PAYMENT
     PENDING_FOR_REVIEW
     IN_REVIEW

@@ -1,4 +1,5 @@
-import { City, PrismaClient } from "@prisma/client"
+import { City } from "@prisma/client"
+import { prisma } from "../../core/prisma"
 
 export async function listCity({
 	filter,
@@ -7,7 +8,6 @@ export async function listCity({
 	filter?: { id?: number; stateId?: number }
 	include?: { state?: boolean }
 } = {}): Promise<City[]> {
-	const prisma = new PrismaClient()
 	return await prisma.city.findMany({
 		orderBy: { name: "asc" },
 		where: filter,

@@ -1,5 +1,6 @@
-import { PrismaClient, Review } from "@prisma/client"
+import { Review } from "@prisma/client"
 import { ForbiddenError, UnprocessableEntityError } from "../../core/http"
+import { prisma } from "../../core/prisma"
 
 export async function createReview({
 	userId,
@@ -8,11 +9,9 @@ export async function createReview({
 	userId: number
 	offeringId: number
 }): Promise<Review> {
-	const prisma = new PrismaClient()
-
 	const user = await prisma.user.findFirst({ where: { id: userId } })
 	if (!user) throw new UnprocessableEntityError("Invalid offering")
-	if (!user.isSuspended) {
+	if (user.isSuspended) {
 		throw new ForbiddenError("User is not allowed to create review")
 	}
 
