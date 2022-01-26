@@ -8,9 +8,9 @@ const bodySchema = z
 	.object({ offeringId: z.number().int(), cityId: z.number().int() })
 	.strict()
 
-export const apiReviewAdd = new HttpApi({
+export const apiReviewCreate = new HttpApi({
 	method: HttpMethod.POST,
-	endpoint: "/review/add",
+	endpoint: "/review",
 	bodySchema,
 	handler: async ({ req, body }) => {
 		const { id: userId } = userAuth(req, [AuthRole.USER])
