@@ -10,7 +10,7 @@ export async function listOffering({
 		languageId,
 		maxPrice,
 		paperTypeId,
-		isActive,
+		isAvailable,
 	} = {},
 	include,
 }: {
@@ -22,13 +22,12 @@ export async function listOffering({
 		languageId?: number
 		cityId?: number
 		maxPrice?: number
-		isActive?: boolean
+		isAvailable?: boolean
 	}
 	include?: { lawyer?: boolean; paperType?: boolean }
 } = {}): Promise<Offering[]> {
 	const prisma = new PrismaClient()
 	return await prisma.offering.findMany({
-		orderBy: { lawyer: { ratingPoints: "desc" }, paperType: { name: "asc" } },
 		where: {
 			...(id && { id }),
 			...(lawyerId && { lawyerId }),
@@ -36,7 +35,7 @@ export async function listOffering({
 			...(paperTypeId && { paperTypeId }),
 			...(languageId && { languageId }),
 			...(maxPrice && { price: { gte: maxPrice } }),
-			...(_.isBoolean(isActive) && { isActive }),
+			...(_.isBoolean(isAvailable) && { isAvailable }),
 			lawyer: {
 				isSuspended: false,
 				...(_.isBoolean(isLawyerAvailable) && { isAvailable: isLawyerAvailable }),
