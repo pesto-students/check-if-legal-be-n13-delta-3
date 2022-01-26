@@ -1,8 +1,8 @@
-import { Language, PrismaClient } from "@prisma/client"
+import { Language } from "@prisma/client"
+import { prisma } from "../../core/prisma"
 
 export async function listLanguage({
 	filter,
 }: { filter?: { id?: number } } = {}): Promise<Language[]> {
-	const prisma = new PrismaClient()
 	return await prisma.language.findMany({ orderBy: { name: "asc" }, where: filter })
 }

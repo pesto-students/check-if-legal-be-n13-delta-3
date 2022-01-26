@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "../../core/prisma"
 import { UnprocessableEntityError } from "../../core/http"
 
 export async function checkLanguageNameAvailability(name: string) {
-	const prisma = new PrismaClient()
 	const language = await prisma.language.findFirst({
 		where: { name: { equals: name.toLowerCase(), mode: "insensitive" } },
 	})

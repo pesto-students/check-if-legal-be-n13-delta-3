@@ -1,4 +1,5 @@
-import { PrismaClient, User } from "@prisma/client"
+import { User } from "@prisma/client"
+import { prisma } from "../../core/prisma"
 
 export async function createUser({
 	name,
@@ -9,6 +10,5 @@ export async function createUser({
 	isLawyer?: boolean
 	isSuspended?: boolean
 }): Promise<User> {
-	const prisma = new PrismaClient()
 	return await prisma.user.create({ data: { name, isLawyer, isSuspended } })
 }

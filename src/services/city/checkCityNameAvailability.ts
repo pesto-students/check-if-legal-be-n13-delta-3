@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client"
 import { UnprocessableEntityError } from "../../core/http"
+import { prisma } from "../../core/prisma"
 
 export async function checkCityNameAvailability({
 	stateId,
@@ -8,7 +8,6 @@ export async function checkCityNameAvailability({
 	stateId: number
 	name: string
 }) {
-	const prisma = new PrismaClient()
 	const city = await prisma.city.findFirst({
 		where: { stateId, name: { equals: name.toLowerCase(), mode: "insensitive" } },
 	})
