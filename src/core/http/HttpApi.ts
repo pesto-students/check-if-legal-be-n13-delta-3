@@ -1,5 +1,6 @@
 import { Request, RequestHandler, Response } from "express"
 import { z } from "zod"
+import { BadRequestError } from "."
 import configs from "../configs"
 import { HttpMethod, HttpStatusCode } from "./enums"
 import { HttpError, isHttpError } from "./HttpError"
@@ -47,9 +48,17 @@ export class HttpApi<T extends unknown = unknown> {
 		this.callApi = async (req, res) => {
 			try {
 				if (res.headersSent) return
-				const body = await this.bodySchema.parseAsync(req.body)
-				const responseObject = await this.handler({ req, body })
-				sendJsonResponse(res, responseObject)
+
+				try {
+					const body = await this.bodySchema.parseAsync(req.body)
+					const responseObject = await this.handler({ req, body })
+					sendJsonResponse(res, responseObject)
+				} catch (err) {
+					if (err instanceof z.ZodError) {
+						throw new BadRequestError(err.message, err.stack)
+					}
+					throw err
+				}
 			} catch (err) {
 				sendErrorResponse(res, err)
 			}

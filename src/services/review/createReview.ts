@@ -17,14 +17,14 @@ export async function createReview({
 	}
 
 	const service = await prisma.offering.findFirst({
-		where: { id: offeringId, isActive: true },
+		where: { id: offeringId, isAvailable: true },
 		include: { language: true, lawyer: { include: { city: true } }, paperType: true },
 	})
 	if (!service) throw new UnprocessableEntityError("Invalid offering")
 	if (service.lawyer.isSuspended) {
 		throw new UnprocessableEntityError("Lawyer is currently suspended")
 	}
-	if (!service.lawyer.isActive) {
+	if (!service.lawyer.isAvailable) {
 		throw new UnprocessableEntityError("Lawyer is currently not taking reviews")
 	}
 

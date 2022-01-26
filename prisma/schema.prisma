@@ -8,12 +8,11 @@ generator client {
 }
 
 model Admin {
-    id                  Int      @id @default(autoincrement())
-    createdAt           DateTime @default(now())
-    updatedAt           DateTime @updatedAt
-    username            String   @unique @db.VarChar(20)
-    hashedPassword      String   @db.VarChar(255)
-    lawyerVerifications Lawyer[]
+    id             Int      @id @default(autoincrement())
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+    username       String   @unique @db.VarChar(20)
+    hashedPassword String   @db.VarChar(255)
 }
 
 model GoogleOAuth {
@@ -23,10 +22,8 @@ model GoogleOAuth {
     googleUserId String   @unique
     email        String   @unique
     name         String
-    userId       Int?     @unique
-    user         User?    @relation(fields: [userId], references: [id])
-    lawyerId     Int?     @unique
-    lawyer       Lawyer?  @relation(fields: [lawyerId], references: [id])
+    userId       Int      @unique
+    user         User     @relation(fields: [userId], references: [id])
 }
 
 model User {
@@ -35,32 +32,33 @@ model User {
     updatedAt   DateTime       @updatedAt
     name        String         @unique @db.VarChar(100)
     isSuspended Boolean        @default(false)
+    isLawyer    Boolean        @default(false)
     googleOAuth GoogleOAuth?
+    lawyer      Lawyer?
     reviews     Review[]
     ratings     ReviewRating[]
 }
 
 model Lawyer {
-    id                Int          @id @default(autoincrement())
-    createdAt         DateTime     @default(now())
-    updatedAt         DateTime     @updatedAt
-    name              String       @unique @db.VarChar(100)
-    address           String
-    description       String?
-    cityId            Int
-    city              City         @relation(fields: [cityId], references: [id])
-    phone             String       @db.VarChar(20)
-    isVerified        Boolean      @default(false)
-    verifiedByAdminId Int?
-    verifiedByAdmin   Admin?       @relation(fields: [verifiedByAdminId], references: [id])
-    isSuspended       Boolean      @default(false)
-    isActive          Boolean      @default(true)
-    averageRating     Float        @default(0)
-    ratingPoints      Int          @default(0)
-    googleOAuth       GoogleOAuth?
-    offerings         Offering[]
-    reviews           Review[]
-    banks             LawyerBank[]
+    id            Int          @id @default(autoincrement())
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+    name          String       @unique @db.VarChar(100)
+    address       String
+    description   String?
+    phone         String       @db.VarChar(20)
+    isVerified    Boolean      @default(false)
+    isSuspended   Boolean      @default(false)
+    isAvailable   Boolean      @default(true)
+    averageRating Float        @default(0)
+    ratingPoints  Int          @default(0)
+    userId        Int          @unique
+    cityId        Int
+    city          City         @relation(fields: [cityId], references: [id])
+    user          User         @relation(fields: [userId], references: [id])
+    offerings     Offering[]
+    reviews       Review[]
+    banks         LawyerBank[]
 }
 
 model LawyerBank {
@@ -116,7 +114,7 @@ model Offering {
     language            Language  @relation(fields: [languageId], references: [id])
     price               Float
     expectedTimeInHours Int
-    isActive            Boolean   @default(true)
+    isAvailable         Boolean   @default(true)
     description         String?
 }
 
