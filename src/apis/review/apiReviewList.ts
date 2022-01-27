@@ -3,6 +3,7 @@ import { z } from "zod"
 import { userAuth } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { HttpApi, HttpMethod, UnauthorisedError } from "../../core/http"
+import { checkLawyerAuthorization } from "../../services/lawyer/checkLawyerAuthorization"
 import { sanitizeLawyer } from "../../services/lawyer/sanitizeLawyer"
 import { listReview } from "../../services/review/listReview"
 import { sanitizeUser } from "../../services/user/sanitizeUser"
@@ -12,8 +13,6 @@ const bodySchema = z
 		filter: z
 			.object({
 				paperTypeId: z.number().int().optional(),
-				cityId: z.number().int().optional(),
-				languageId: z.number().int().optional(),
 				status: z.nativeEnum(ReviewStatus).optional(),
 			})
 			.optional(),
@@ -40,8 +39,10 @@ export const apiReviewList = new HttpApi({
 		let lawyerId: number | undefined = undefined
 
 		if (role === AuthRole.USER) userId = id
-		else if (role === AuthRole.LAWYER) lawyerId = id
-		else throw new UnauthorisedError("User is unauthorized")
+		else if (role === AuthRole.LAWYER) {
+			const lawyer = await checkLawyerAuthorization(id)
+			lawyerId = lawyer.id
+		} else throw new UnauthorisedError("User is unauthorized")
 
 		const reviews = await listReview({
 			filter: { ...filter, userId, lawyerId },
