@@ -14,4 +14,7 @@ export default {
 	jwt: {
 		secret: process.env.JWT_SECRET || "secret",
 	},
+	googleAuth: {
+		clientId: process.env.GOOGLE_AUTH_CLIENT_ID || null,
+	},
 }
