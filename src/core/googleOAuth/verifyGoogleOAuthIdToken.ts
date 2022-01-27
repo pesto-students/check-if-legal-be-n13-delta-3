@@ -16,5 +16,9 @@ export async function verifyGoogleOAuthIdToken(idToken: string) {
 		throw new UnprocessableEntityError("Google Auth Token is invalid")
 	}
 
-	return payload
+	return {
+		googleUserId: payload.sub,
+		email: payload.email,
+		name: payload.name,
+	}
 }
