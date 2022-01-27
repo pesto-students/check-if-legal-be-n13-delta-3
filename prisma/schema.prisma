@@ -20,8 +20,7 @@ model GoogleOAuth {
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
     googleUserId String   @unique
-    email        String   @unique
-    name         String
+    email        String?  @unique
     userId       Int      @unique
     user         User     @relation(fields: [userId], references: [id])
 }

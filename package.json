@@ -25,6 +25,7 @@
 		"dotenv": "^14.2.0",
 		"express": "^4.17.2",
 		"express-form-data": "^2.0.17",
+		"google-auth-library": "^7.11.0",
 		"helmet": "^5.0.1",
 		"hpp": "^0.2.3",
 		"jsonwebtoken": "^8.5.1",
