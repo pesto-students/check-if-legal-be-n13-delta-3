@@ -5,15 +5,32 @@ import configs from "../configs"
 import { HttpMethod, HttpStatusCode } from "./enums"
 import { HttpError, isHttpError } from "./HttpError"
 import { HttpResponse } from "./HttpResponse"
+import expressFormData from "express-form-data"
+import { F, FileObject } from "./multipart"
+import _ from "lodash"
 
-type IHandler<T> = (payload: { req: Request; body: T }) => Promise<HttpResponse | any>
-interface IHttpApiConstructorParameters<T extends unknown> {
+type IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType> = (payload: {
+	req: Request
+	body: BodySchemaType
+	query: QuerySchemaType
+	params: ParamsSchemaType
+	files: unknown
+}) => Promise<HttpResponse | any>
+interface IHttpApiConstructorParameters<
+	BodySchemaType extends unknown,
+	QuerySchemaType extends unknown,
+	ParamsSchemaType extends unknown,
+> {
 	method: HttpMethod
 	endpoint: string
-	bodySchema?: z.Schema<T>
+	bodySchema?: z.Schema<BodySchemaType>
+	querySchema?: z.Schema<QuerySchemaType>
+	paramsSchema?: z.Schema<ParamsSchemaType>
+	filesSchema?: FileObject
+	acceptMultipartFormData?: boolean
 	options?: IOptions
 	middlewares?: RequestHandler[]
-	handler: IHandler<T>
+	handler: IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType>
 }
 
 interface IOptions {
@@ -21,37 +38,88 @@ interface IOptions {
 	formData?: { autoClean?: boolean; maxFilesSize?: number; uploadDir?: string }
 }
 
-export class HttpApi<T extends unknown = unknown> {
+export class HttpApi<
+	BodySchemaType extends unknown,
+	QuerySchemaType extends unknown,
+	ParamsSchemaType extends unknown,
+> {
 	method: HttpMethod
 	endpoint: string
-	bodySchema: z.Schema<T>
+	bodySchema: z.Schema<BodySchemaType>
+	querySchema: z.Schema<QuerySchemaType>
+	paramsSchema: z.Schema<ParamsSchemaType>
+	filesSchema?: FileObject
+	acceptMultipartFormData: boolean
 	options: IOptions
 	middlewares: RequestHandler[]
-	handler: IHandler<T>
+	handler: IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType>
 
 	callApi: RequestHandler
 
-	constructor(payload: IHttpApiConstructorParameters<T>) {
+	constructor(
+		payload: IHttpApiConstructorParameters<
+			BodySchemaType,
+			QuerySchemaType,
+			ParamsSchemaType
+		>,
+	) {
 		this.method = payload.method
 		this.endpoint = payload.endpoint
 		// @ts-ignore
 		this.bodySchema = payload.bodySchema ?? z.object({}).strict()
+		// @ts-ignore
+		this.querySchema = payload.querySchema ?? z.object({}).strict()
+		// @ts-ignore
+		this.paramsSchema = payload.paramsSchema ?? z.object({}).strict()
+
+		this.acceptMultipartFormData = payload.acceptMultipartFormData ?? false
+		if (this.acceptMultipartFormData && payload.filesSchema) {
+			this.filesSchema = payload.filesSchema ?? F.object({})
+		}
 
 		const defaultOptions: IOptions = {
 			hideErrorStack: configs.server.environment === "production",
 		}
-
 		this.options = payload.options ?? defaultOptions
 		this.handler = payload.handler
-		this.middlewares = payload.middlewares ?? []
+
+		this.middlewares = []
+		if (this.acceptMultipartFormData) {
+			const formDataOptions = this.options.formData ?? {}
+			this.middlewares.push(expressFormData.parse(formDataOptions))
+		}
+		if (payload.middlewares) {
+			this.middlewares.push(...payload.middlewares)
+		}
 
 		this.callApi = async (req, res) => {
 			try {
 				if (res.headersSent) return
 
+				let files: any = undefined
+				if (this.acceptMultipartFormData) {
+					if (this.filesSchema) {
+						// @ts-ignore
+						files = this.filesSchema.parse(req.files)
+					} else {
+						// @ts-ignore
+						files = req.files
+					}
+				}
+
 				try {
-					const body = await this.bodySchema.parseAsync(req.body)
-					const responseObject = await this.handler({ req, body })
+					const [body, query, params] = await Promise.all([
+						this.bodySchema.parseAsync(req.body),
+						this.querySchema.parseAsync(req.query),
+						this.paramsSchema.parseAsync(req.params),
+					])
+					const responseObject = await this.handler({
+						req,
+						body,
+						query,
+						params,
+						files,
+					})
 					sendJsonResponse(res, responseObject)
 				} catch (err) {
 					if (err instanceof z.ZodError) {
