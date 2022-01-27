@@ -1,3 +1,4 @@
 import { apiReviewCreate } from "./apiReviewCreate"
+import { apiReviewList } from "./apiReviewList"
 
-export default [apiReviewCreate]
+export default [apiReviewCreate, apiReviewList]
