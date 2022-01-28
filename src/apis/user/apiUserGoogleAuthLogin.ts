@@ -11,7 +11,7 @@ const bodySchema = z
 
 export const apiUserGoogleAuthLogin = new HttpApi({
 	method: HttpMethod.POST,
-	endpoint: "/user/googleAuth/login",
+	endpoint: "/user/googleAuth",
 	bodySchema,
 	handler: async ({ body: { idToken, isLawyer } }) => {
 		const { email, googleUserId, name } = await verifyGoogleOAuthIdToken(idToken)

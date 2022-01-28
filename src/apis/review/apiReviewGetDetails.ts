@@ -8,7 +8,6 @@ import { getUserOrLawyerFromAuth } from "../../services/user/getUserOrLawyerFrom
 
 const bodySchema = z
 	.object({
-		filter: z.object({ id: z.number().int() }),
 		include: z
 			.object({
 				lawyer: z.boolean().optional(),
@@ -23,21 +22,17 @@ const bodySchema = z
 	})
 	.strict()
 
-export const apiReviewList = new HttpApi({
-	method: HttpMethod.POST,
-	endpoint: "/review/get",
+export const apiReviewGetDetails = new HttpApi({
+	method: HttpMethod.GET,
+	endpoint: "/review/:id/details",
 	bodySchema,
-	handler: async ({ req, body: { filter, include } }) => {
+	paramsSchema: z.object({ id: z.number().int() }).strict(),
+	handler: async ({ req, body: { include }, params: { id } }) => {
 		const authPayload = userAuth(req, [AuthRole.USER, AuthRole.LAWYER])
 		const { userId, lawyerId } = await getUserOrLawyerFromAuth(authPayload)
 
-		const [review] = await listReview({
-			filter: { ...filter, userId, lawyerId },
-			include,
-		})
-		if (!review) {
-			throw new UnprocessableEntityError("Review not found")
-		}
+		const [review] = await listReview({ filter: { id, userId, lawyerId }, include })
+		if (!review) throw new UnprocessableEntityError("Review not found")
 
 		return sanitizeReview(review)
 	},

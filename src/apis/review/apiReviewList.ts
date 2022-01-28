@@ -28,8 +28,8 @@ const bodySchema = z
 	.strict()
 
 export const apiReviewList = new HttpApi({
-	method: HttpMethod.POST,
-	endpoint: "/review/list",
+	method: HttpMethod.GET,
+	endpoint: "/review",
 	bodySchema,
 	handler: async ({ req, body: { filter, include } }) => {
 		const authPayload = userAuth(req, [AuthRole.USER, AuthRole.LAWYER])
