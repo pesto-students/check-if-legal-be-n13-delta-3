@@ -14,7 +14,7 @@ type IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType> = (payload: {
 	body: BodySchemaType
 	query: QuerySchemaType
 	params: ParamsSchemaType
-	files: unknown
+	files: any
 }) => Promise<HttpResponse | any>
 interface IHttpApiConstructorParameters<
 	BodySchemaType extends unknown,

@@ -1,5 +1,6 @@
 import adminApis from "./admin"
-import userApis from "./user"
+import lawyerApis from "./lawyer"
 import reviewApis from "./review"
+import userApis from "./user"
 
-export default [...adminApis, ...reviewApis, ...userApis]
+export default [...adminApis, ...reviewApis, ...userApis, ...lawyerApis]
