@@ -35,6 +35,7 @@ export async function createReview({
 			paperTypeId: service.paperTypeId,
 			languageId: service.languageId,
 			price: service.price,
+			expectedTimeInHours: service.expectedTimeInHours,
 		},
 	})
 }
