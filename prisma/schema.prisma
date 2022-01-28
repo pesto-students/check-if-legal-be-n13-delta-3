@@ -118,24 +118,25 @@ model Offering {
 }
 
 model Review {
-    id          Int              @id @default(autoincrement())
-    createdAt   DateTime         @default(now())
-    updatedAt   DateTime         @updatedAt
-    userId      Int
-    user        User             @relation(fields: [userId], references: [id])
-    lawyerId    Int
-    lawyer      Lawyer           @relation(fields: [lawyerId], references: [id])
-    paperTypeId Int
-    paperType   PaperType        @relation(fields: [paperTypeId], references: [id])
-    languageId  Int
-    language    Language         @relation(fields: [languageId], references: [id])
-    cityId      Int
-    city        City             @relation(fields: [cityId], references: [id])
-    userNote    String?
-    price       Float
-    status      ReviewStatus     @default(INITIAL)
-    feedbacks   ReviewFeedback[]
-    rating      ReviewRating?
+    id                  Int              @id @default(autoincrement())
+    createdAt           DateTime         @default(now())
+    updatedAt           DateTime         @updatedAt
+    userId              Int
+    user                User             @relation(fields: [userId], references: [id])
+    lawyerId            Int
+    lawyer              Lawyer           @relation(fields: [lawyerId], references: [id])
+    paperTypeId         Int
+    paperType           PaperType        @relation(fields: [paperTypeId], references: [id])
+    languageId          Int
+    language            Language         @relation(fields: [languageId], references: [id])
+    cityId              Int
+    city                City             @relation(fields: [cityId], references: [id])
+    userNote            String?
+    price               Float
+    expectedTimeInHours Int
+    status              ReviewStatus     @default(INITIAL)
+    feedbacks           ReviewFeedback[]
+    rating              ReviewRating?
 }
 
 model ReviewRating {
