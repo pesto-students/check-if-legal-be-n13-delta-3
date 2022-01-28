@@ -9,8 +9,8 @@ import { generateOffering } from "../../core/test/resources/offering"
 import { generateUser } from "../../core/test/resources/user"
 import { truncateDatabase } from "../../core/test/truncateDatabase"
 
-const method = HttpMethod.GET
-const endpoint = "/user/offering"
+const method = HttpMethod.POST
+const endpoint = "/user/offering/list"
 
 describe(`API: ${endpoint}`, () => {
 	let userId: number

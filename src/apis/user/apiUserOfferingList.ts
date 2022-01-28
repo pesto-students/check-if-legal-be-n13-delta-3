@@ -14,8 +14,8 @@ const bodySchema = z
 	.strict()
 
 export const apiUserOfferingList = new HttpApi({
-	method: HttpMethod.GET,
-	endpoint: "/user/offering",
+	method: HttpMethod.POST,
+	endpoint: "/user/offering/list",
 	bodySchema,
 	handler: async ({ req, body }) => {
 		userAuth(req, [AuthRole.USER])

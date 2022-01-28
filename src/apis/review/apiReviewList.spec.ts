@@ -9,8 +9,8 @@ import { generateReview } from "../../core/test/resources/review"
 import { generateUser } from "../../core/test/resources/user"
 import { truncateDatabase } from "../../core/test/truncateDatabase"
 
-const method = HttpMethod.GET
-const endpoint = "/review"
+const method = HttpMethod.POST
+const endpoint = "/review/list"
 
 describe(`API: ${endpoint}`, () => {
 	let user: User

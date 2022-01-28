@@ -21,6 +21,7 @@ export async function listReview({
 		language?: boolean
 		city?: boolean
 		feedbacks?: boolean
+		rating?: boolean
 	}
 } = {}): Promise<Review[]> {
 	return await prisma.review.findMany({

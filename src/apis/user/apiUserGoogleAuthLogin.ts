@@ -9,9 +9,9 @@ const bodySchema = z
 	.object({ idToken: z.string(), isLawyer: z.boolean().optional() })
 	.strict()
 
-export const apiUserGoogleAuth = new HttpApi({
+export const apiUserGoogleAuthLogin = new HttpApi({
 	method: HttpMethod.POST,
-	endpoint: "/user/googleAuth",
+	endpoint: "/user/googleAuth/login",
 	bodySchema,
 	handler: async ({ body: { idToken, isLawyer } }) => {
 		const { email, googleUserId, name } = await verifyGoogleOAuthIdToken(idToken)

@@ -10,7 +10,7 @@ const bodySchema = z
 
 export const apiReviewCreate = new HttpApi({
 	method: HttpMethod.POST,
-	endpoint: "/review",
+	endpoint: "/review/create",
 	bodySchema,
 	handler: async ({ req, body }) => {
 		const { id: userId } = userAuth(req, [AuthRole.USER])

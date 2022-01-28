@@ -20,7 +20,7 @@ const filesSchema = F.object({ identityProofs: F.multiple() })
 
 export const apiLawyerRegistration = new HttpApi({
 	method: HttpMethod.POST,
-	endpoint: "/lawyer/registration",
+	endpoint: "/lawyer/register",
 	acceptMultipartFormData: true,
 	options: {
 		formData: { autoClean: true, uploadDir: "temp", maxFilesSize: 1024 * 1024 * 10 },

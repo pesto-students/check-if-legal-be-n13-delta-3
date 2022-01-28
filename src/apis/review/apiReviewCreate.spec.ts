@@ -11,7 +11,7 @@ import { truncateDatabase } from "../../core/test/truncateDatabase"
 import { listReview } from "../../services/review/listReview"
 
 const method = HttpMethod.POST
-const endpoint = "/review"
+const endpoint = "/review/create"
 
 describe(`API: ${endpoint}`, () => {
 	let userId: number
