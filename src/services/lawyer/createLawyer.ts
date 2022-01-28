@@ -1,5 +1,5 @@
 import { Lawyer } from "@prisma/client"
-import { UnprocessableEntityError } from "../../core/http"
+import { ConflictError, UnprocessableEntityError } from "../../core/http"
 import { prisma } from "../../core/prisma"
 
 export async function createLawyer({
@@ -23,9 +23,19 @@ export async function createLawyer({
 	isAvailable?: boolean
 	isVerified?: boolean
 }): Promise<Lawyer> {
-	const user = await prisma.user.findFirst({ where: { id: userId } })
-	if (!user) throw new UnprocessableEntityError("Invalid user")
-	if (!user.isLawyer) throw new UnprocessableEntityError("User is not a lawyer")
+	const user = await prisma.user.findFirst({
+		where: { id: userId },
+		include: { lawyer: true },
+	})
+	if (!user) {
+		throw new UnprocessableEntityError("Invalid user")
+	}
+	if (!user.isLawyer) {
+		throw new UnprocessableEntityError("User is not a lawyer")
+	}
+	if (user.lawyer) {
+		throw new ConflictError("Lawyer registration already exists")
+	}
 
 	return await prisma.lawyer.create({
 		data: {
