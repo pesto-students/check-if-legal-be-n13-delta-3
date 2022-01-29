@@ -1,5 +1,5 @@
 import { randState } from "@ngneat/falso"
-import { createState } from "../../../services/state/createState"
+import { createState } from "../../services/state/createState"
 
 export async function generateState() {
 	const name = randState()

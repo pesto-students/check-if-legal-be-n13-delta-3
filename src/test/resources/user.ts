@@ -1,5 +1,5 @@
 import { randFullName } from "@ngneat/falso"
-import { createUser } from "../../../services/user/createUser"
+import { createUser } from "../../services/user/createUser"
 
 export async function generateUser({
 	isLawyer,

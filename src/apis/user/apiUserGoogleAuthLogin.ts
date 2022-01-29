@@ -1,9 +1,9 @@
 import { z } from "zod"
-import { createAuthToken } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
-import { verifyGoogleOAuthIdToken } from "../../core/googleOAuth/verifyGoogleOAuthIdToken"
+import { verifyGoogleOAuthIdToken } from "../../helpers/googleOAuth/verifyGoogleOAuthIdToken"
 import { HttpApi, HttpMethod } from "../../core/http"
 import { getOrCreateUserWithGoogleOAuth } from "../../services/user/getOrCreateUserWithGoogleOAuth"
+import { createAuthToken } from "../../helpers/auth/authToken"
 
 const bodySchema = z
 	.object({ idToken: z.string(), isLawyer: z.boolean().optional() })

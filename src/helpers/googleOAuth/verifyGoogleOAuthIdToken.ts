@@ -1,6 +1,6 @@
 import { OAuth2Client } from "google-auth-library"
-import configs from "../configs"
-import { UnprocessableEntityError } from "../http"
+import configs from "../../core/configs"
+import { UnprocessableEntityError } from "../../core/http"
 
 export async function verifyGoogleOAuthIdToken(idToken: string) {
 	const clientId = configs.googleAuth.clientId
@@ -16,9 +16,5 @@ export async function verifyGoogleOAuthIdToken(idToken: string) {
 		throw new UnprocessableEntityError("Google Auth Token is invalid")
 	}
 
-	return {
-		googleUserId: payload.sub,
-		email: payload.email,
-		name: payload.name,
-	}
+	return { googleUserId: payload.sub, email: payload.email, name: payload.name }
 }

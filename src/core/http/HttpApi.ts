@@ -29,7 +29,6 @@ interface IHttpApiConstructorParameters<
 
 interface IOptions {
 	hideErrorStack?: boolean
-	formData?: { autoClean?: boolean; maxFilesSize?: number; uploadDir?: string }
 }
 
 export class HttpApi<

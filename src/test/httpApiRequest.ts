@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { HttpMethod, HttpStatusCode } from "../http"
+import { HttpMethod, HttpStatusCode } from "../core/http"
 import { requester } from "./setup"
 
 export async function httpApiRequest({

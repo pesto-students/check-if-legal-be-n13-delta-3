@@ -1,7 +1,7 @@
 import { randJobDescriptor, randPhoneNumber, randStreetAddress } from "@ngneat/falso"
 import { User } from "@prisma/client"
-import { createLawyer } from "../../../services/lawyer/createLawyer"
-import { listUser } from "../../../services/user/listUser"
+import { createLawyer } from "../../services/lawyer/createLawyer"
+import { listUser } from "../../services/user/listUser"
 import { generateCity } from "./city"
 import { generateUser } from "./user"
 

@@ -4,7 +4,7 @@ let dir = process.argv[2] || "**"
 const fileName = process.argv[3] || "*"
 if (fileName == "*") dir += "/**"
 
-const spec = [`src/core/test/setup.ts`, `src/${dir}/${fileName}.spec.ts`]
+const spec = [`src/test/setup.ts`, `src/${dir}/${fileName}.spec.ts`]
 
 module.exports = {
 	timeout: 20000,

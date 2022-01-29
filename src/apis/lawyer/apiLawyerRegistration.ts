@@ -1,11 +1,11 @@
 import { z } from "zod"
-import { userAuth } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
-import { getLawyerIdProofsDirPath } from "../../core/helpers/directoryPaths"
-import { copyFile } from "../../core/helpers/fs"
+import { getLawyerIdProofsDirPath } from "../../helpers/directoryPaths"
+import { copyFile } from "../../helpers/fs"
 import { createdResponse, HttpApi, HttpMethod } from "../../core/http"
-import { F, IFileData } from "../../core/http/multipart"
 import { createLawyer } from "../../services/lawyer/createLawyer"
+import { userAuth } from "../../helpers/auth/userAuth"
+import multer from "multer"
 
 const bodySchema = z
 	.object({
@@ -16,23 +16,22 @@ const bodySchema = z
 		phone: z.string().max(20),
 	})
 	.strict()
-const filesSchema = F.object({ identityProofs: F.multiple() })
+
+const uploadMiddleware = multer({ dest: "temp/" }).fields([
+	{ name: "proofs", maxCount: 3 },
+])
 
 export const apiLawyerRegistration = new HttpApi({
 	method: HttpMethod.POST,
 	endpoint: "/lawyer/register",
-	acceptMultipartFormData: true,
-	options: {
-		formData: { autoClean: true, uploadDir: "temp", maxFilesSize: 1024 * 1024 * 10 },
-	},
 	bodySchema,
-	filesSchema,
-	handler: async ({ req, body, files }) => {
-		const identityProofFiles = files.identityProofs as IFileData[]
+	middlewares: [uploadMiddleware],
+	handler: async ({ req, body }) => {
+		const { proofs } = req.files as { proofs: Express.Multer.File[] }
 		const { id: userId } = userAuth(req, [AuthRole.LAWYER])
 
 		const lawyer = await createLawyer({ ...body, userId })
-		for (const file of identityProofFiles) {
+		for (const file of proofs) {
 			const dest = getLawyerIdProofsDirPath(lawyer.id)
 			await copyFile({ src: file.path, dest })
 		}

@@ -1,16 +1,16 @@
 import { expect } from "chai"
-import { createAuthToken } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { HttpMethod } from "../../core/http"
-import { httpApiRequest } from "../../core/test/httpApiRequest"
-import { generateCity } from "../../core/test/resources/city"
-import { generateLawyer } from "../../core/test/resources/lawyer"
-import { generateOffering } from "../../core/test/resources/offering"
-import { generateUser } from "../../core/test/resources/user"
-import { truncateDatabase } from "../../core/test/truncateDatabase"
+import { createAuthToken } from "../../helpers/auth/authToken"
+import { httpApiRequest } from "../../test/httpApiRequest"
+import { generateCity } from "../../test/resources/city"
+import { generateLawyer } from "../../test/resources/lawyer"
+import { generateOffering } from "../../test/resources/offering"
+import { generateUser } from "../../test/resources/user"
+import { truncateDatabase } from "../../test/truncateDatabase"
 
-const method = HttpMethod.POST
-const endpoint = "/user/offering/list"
+const method = HttpMethod.GET
+const endpoint = "/user/offering"
 
 describe(`API: ${endpoint}`, () => {
 	let userId: number

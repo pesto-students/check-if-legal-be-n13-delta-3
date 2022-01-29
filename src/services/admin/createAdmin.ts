@@ -1,5 +1,5 @@
 import { Admin } from "@prisma/client"
-import { generateHash } from "../../core/helpers/hash"
+import { generateHash } from "../../helpers/hash"
 import { prisma } from "../../core/prisma"
 import { checkAdminUsernameAvailability } from "./checkAdminUsernameAvailability"
 
