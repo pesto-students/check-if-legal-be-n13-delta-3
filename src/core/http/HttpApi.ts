@@ -5,16 +5,12 @@ import configs from "../configs"
 import { HttpMethod, HttpStatusCode } from "./enums"
 import { HttpError, isHttpError } from "./HttpError"
 import { HttpResponse } from "./HttpResponse"
-import expressFormData from "express-form-data"
-import { F, FileObject } from "./multipart"
-import _ from "lodash"
 
 type IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType> = (payload: {
 	req: Request
 	body: BodySchemaType
 	query: QuerySchemaType
 	params: ParamsSchemaType
-	files: any
 }) => Promise<HttpResponse | any>
 interface IHttpApiConstructorParameters<
 	BodySchemaType extends unknown,
@@ -26,8 +22,6 @@ interface IHttpApiConstructorParameters<
 	bodySchema?: z.Schema<BodySchemaType>
 	querySchema?: z.Schema<QuerySchemaType>
 	paramsSchema?: z.Schema<ParamsSchemaType>
-	filesSchema?: FileObject
-	acceptMultipartFormData?: boolean
 	options?: IOptions
 	middlewares?: RequestHandler[]
 	handler: IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType>
@@ -48,8 +42,6 @@ export class HttpApi<
 	bodySchema: z.Schema<BodySchemaType>
 	querySchema: z.Schema<QuerySchemaType>
 	paramsSchema: z.Schema<ParamsSchemaType>
-	filesSchema?: FileObject
-	acceptMultipartFormData: boolean
 	options: IOptions
 	middlewares: RequestHandler[]
 	handler: IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType>
@@ -72,40 +64,17 @@ export class HttpApi<
 		// @ts-ignore
 		this.paramsSchema = payload.paramsSchema ?? z.object({}).strict()
 
-		this.acceptMultipartFormData = payload.acceptMultipartFormData ?? false
-		if (this.acceptMultipartFormData && payload.filesSchema) {
-			this.filesSchema = payload.filesSchema ?? F.object({})
-		}
-
 		const defaultOptions: IOptions = {
 			hideErrorStack: configs.server.environment === "production",
 		}
 		this.options = payload.options ?? defaultOptions
 		this.handler = payload.handler
 
-		this.middlewares = []
-		if (this.acceptMultipartFormData) {
-			const formDataOptions = this.options.formData ?? {}
-			this.middlewares.push(expressFormData.parse(formDataOptions))
-		}
-		if (payload.middlewares) {
-			this.middlewares.push(...payload.middlewares)
-		}
+		this.middlewares = payload.middlewares ?? []
 
 		this.callApi = async (req, res) => {
 			try {
 				if (res.headersSent) return
-
-				let files: any = undefined
-				if (this.acceptMultipartFormData) {
-					if (this.filesSchema) {
-						// @ts-ignore
-						files = this.filesSchema.parse(req.files)
-					} else {
-						// @ts-ignore
-						files = req.files
-					}
-				}
 
 				try {
 					const [body, query, params] = await Promise.all([
@@ -118,7 +87,6 @@ export class HttpApi<
 						body,
 						query,
 						params,
-						files,
 					})
 					sendJsonResponse(res, responseObject)
 				} catch (err) {
