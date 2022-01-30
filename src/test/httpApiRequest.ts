@@ -33,14 +33,6 @@ export async function httpApiRequest({
 
 		if (body) {
 			for (let [key, value] of Object.entries(body)) {
-				if (typeof value !== "string") {
-					if (!["number" || "boolean"].includes(typeof value)) {
-						throw new Error(
-							`Invalid value type for form-data request: ${typeof value}`,
-						)
-					}
-					value = value.toString()
-				}
 				client.field(key, value)
 			}
 		}
