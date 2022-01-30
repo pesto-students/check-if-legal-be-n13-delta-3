@@ -3,6 +3,7 @@ import { prisma } from "../../core/prisma"
 
 export async function listReview({
 	filter: { id, userId, cityId, lawyerId, languageId, paperTypeId, status } = {},
+	pagination: { limit = 10, pageNo = 1 } = {},
 	include,
 }: {
 	filter?: {
@@ -14,6 +15,7 @@ export async function listReview({
 		cityId?: number
 		status?: ReviewStatus
 	}
+	pagination?: { limit?: number; pageNo?: number }
 	include?: {
 		lawyer?: boolean
 		user?: boolean
@@ -36,5 +38,7 @@ export async function listReview({
 		},
 		include,
 		orderBy: { createdAt: "desc" },
+		...(limit && { take: limit }),
+		...(pageNo && { skip: (pageNo - 1) * limit }),
 	})
 }
