@@ -103,5 +103,8 @@ dist
 # TernJS port file
 .tern-port
 
-# Temporary files by express-form-data
-.temp/
+# Temporary files directory
+temp/
+
+# Storage directory for storing all the files
+storage/

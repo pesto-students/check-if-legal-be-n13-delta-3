@@ -1,41 +1,56 @@
+import _ from "lodash"
+import multer from "multer"
 import { z } from "zod"
 import { AuthRole } from "../../core/enums"
+import { BadRequestError, createdResponse, HttpApi, HttpMethod } from "../../core/http"
+import { userAuth } from "../../helpers/auth/userAuth"
 import { getLawyerIdProofsDirPath } from "../../helpers/directoryPaths"
 import { copyFile } from "../../helpers/fs"
-import { createdResponse, HttpApi, HttpMethod } from "../../core/http"
 import { createLawyer } from "../../services/lawyer/createLawyer"
-import { userAuth } from "../../helpers/auth/userAuth"
-import multer from "multer"
 
 const bodySchema = z
 	.object({
 		name: z.string().max(100),
-		cityId: z.number(),
+		cityId: z.string(),
 		address: z.string().max(400),
 		description: z.string().max(400),
 		phone: z.string().max(20),
 	})
 	.strict()
 
-const uploadMiddleware = multer({ dest: "temp/" }).fields([
-	{ name: "proofs", maxCount: 3 },
-])
+const upload = multer({
+	dest: "temp/",
+	fileFilter: (_req, file, cb) => {
+		if (!["image/png", "image/jpeg"].includes(file.mimetype)) {
+			return cb(new BadRequestError("Wrong file type"))
+		}
+		cb(null, true)
+	},
+})
 
 export const apiLawyerRegistration = new HttpApi({
 	method: HttpMethod.POST,
 	endpoint: "/lawyer/register",
 	bodySchema,
-	middlewares: [uploadMiddleware],
+	middlewares: [upload.array("proofs", 4)],
 	handler: async ({ req, body }) => {
-		const { proofs } = req.files as { proofs: Express.Multer.File[] }
-		const { id: userId } = userAuth(req, [AuthRole.LAWYER])
-
-		const lawyer = await createLawyer({ ...body, userId })
-		for (const file of proofs) {
-			const dest = getLawyerIdProofsDirPath(lawyer.id)
-			await copyFile({ src: file.path, dest })
+		if (!req.files) throw new BadRequestError("Files required")
+		let proofFiles: Express.Multer.File[] = []
+		if (_.isArray(req.files)) {
+			proofFiles = req.files.filter((file) => file.fieldname === "proofs")
 		}
 
+		if (_.isEmpty(proofFiles)) {
+			throw new BadRequestError("Identity proof files required")
+		}
+
+		const { id: userId } = userAuth(req, [AuthRole.LAWYER])
+		const lawyer = await createLawyer({ ...body, cityId: +body.cityId, userId })
+
+		for (const file of proofFiles) {
+			const dest = getLawyerIdProofsDirPath(lawyer.id)
+			await copyFile({ src: file.path, dest, fileName: file.originalname })
+		}
 		return createdResponse({ id: lawyer.id })
 	},
 })
