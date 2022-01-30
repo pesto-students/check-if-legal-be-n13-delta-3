@@ -16,7 +16,7 @@ export async function generateOffering({
 	languageId?: number
 	isAvailable?: boolean
 } = {}) {
-	if (!lawyerId) lawyerId = (await generateLawyer()).id
+	if (!lawyerId) lawyerId = (await generateLawyer({ isVerified: true })).id
 	if (!paperTypeId) paperTypeId = (await generatePaperType()).id
 	if (!languageId) languageId = (await generateLanguage()).id
 

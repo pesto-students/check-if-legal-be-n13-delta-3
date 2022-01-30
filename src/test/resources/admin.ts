@@ -3,22 +3,25 @@ import { checkAdminUsernameAvailability } from "../../services/admin/checkAdminU
 import { createAdmin } from "../../services/admin/createAdmin"
 
 export async function generateAdmin() {
-	const username = await generateUniqueUsernameForAdmin()
+	const username = await getAvailableAdminUsername()
 	const password = randPassword()
 
 	const created = await createAdmin({ username, password })
 	return { ...created, password }
 }
 
-export async function generateUniqueUsernameForAdmin() {
+export async function getAvailableAdminUsername() {
 	let username = randUserName()
 	do {
 		try {
 			await checkAdminUsernameAvailability(username)
+			return username
 		} catch (err) {
-			username = randUserName()
-			continue
+			if (err instanceof Error && err.name == "ConflictError") {
+				username = randUserName()
+				continue
+			}
+			throw err
 		}
-	} while (false)
-	return username
+	} while (true)
 }

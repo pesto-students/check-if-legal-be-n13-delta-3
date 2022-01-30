@@ -1,5 +1,4 @@
 import { createReview } from "../../services/review/createReview"
-import { generateLawyer } from "./lawyer"
 import { generateOffering } from "./offering"
 import { generateUser } from "./user"
 
@@ -7,9 +6,18 @@ export async function generateReview({
 	lawyerId,
 	offeringId,
 	userId,
-}: { lawyerId?: number; offeringId?: number; userId?: number } = {}) {
-	if (!lawyerId) lawyerId = (await generateLawyer()).id
-	if (!offeringId) offeringId = (await generateOffering({ lawyerId })).id
+	paperTypeId,
+	languageId,
+}: {
+	lawyerId?: number
+	offeringId?: number
+	userId?: number
+	paperTypeId?: number
+	languageId?: number
+} = {}) {
+	if (!offeringId) {
+		offeringId = (await generateOffering({ lawyerId, paperTypeId, languageId })).id
+	}
 	if (!userId) userId = (await generateUser()).id
 
 	return await createReview({ userId, offeringId })
