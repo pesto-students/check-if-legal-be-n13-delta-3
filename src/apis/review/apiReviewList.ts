@@ -9,20 +9,12 @@ import { getUserOrLawyerFromAuth } from "../../services/user/getUserOrLawyerFrom
 
 const bodySchema = z
 	.object({
-		filter: z
-			.object({
-				paperTypeId: z.number().int().optional(),
-				status: z.nativeEnum(ReviewStatus).optional(),
-			})
-			.optional(),
+		paperTypeId: z.number().int().optional(),
+		status: z.nativeEnum(ReviewStatus).optional(),
+		limit: z.number().int().optional().default(10),
+		pageNo: z.number().int().optional().default(1),
 		include: z
-			.object({
-				lawyer: z.boolean().optional(),
-				user: z.boolean().optional(),
-				city: z.boolean().optional(),
-				paperType: z.boolean().optional(),
-				language: z.boolean().optional(),
-			})
+			.object({ lawyer: z.boolean().optional(), user: z.boolean().optional() })
 			.optional(),
 	})
 	.strict()
@@ -31,13 +23,15 @@ export const apiReviewList = new HttpApi({
 	method: HttpMethod.GET,
 	endpoint: "/review",
 	bodySchema,
-	handler: async ({ req, body: { filter, include } }) => {
+	handler: async ({ req, body }) => {
 		const authPayload = userAuth(req, [AuthRole.USER, AuthRole.LAWYER])
 		const { userId, lawyerId } = await getUserOrLawyerFromAuth(authPayload)
 
+		const { include, limit, pageNo, paperTypeId, status } = body
 		const reviews = await listReview({
-			filter: { ...filter, userId, lawyerId },
-			include,
+			filter: { paperTypeId, status, userId, lawyerId },
+			pagination: { limit, pageNo },
+			include: { ...include, city: true, paperType: true, language: true },
 		})
 
 		return reviews.map((review) => sanitizeReview(review))
