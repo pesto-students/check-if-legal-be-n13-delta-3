@@ -1,4 +1,4 @@
-import { UnprocessableEntityError } from "../../core/http"
+import { ConflictError } from "../../core/http"
 import { prisma } from "../../core/prisma"
 
 export async function checkCityNameAvailability({
@@ -14,7 +14,7 @@ export async function checkCityNameAvailability({
 	if (!city) return
 
 	const state = await prisma.state.findFirst({ where: { id: stateId } })
-	throw new UnprocessableEntityError(
+	throw new ConflictError(
 		`City with name ${name} already exists in state ${state?.name}`,
 	)
 }
