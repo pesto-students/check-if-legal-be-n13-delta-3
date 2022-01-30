@@ -1,7 +1,7 @@
 import chai from "chai"
 import chaiHttp from "chai-http"
 import chaiThings from "chai-things"
-import httpServer from "../../server"
+import httpServer from "../server"
 
 chai.use(chaiHttp)
 chai.use(chaiThings)

@@ -1,6 +1,6 @@
-import { IAuthPayload } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { UnauthorisedError } from "../../core/http"
+import { IAuthPayload } from "../../helpers/auth/authToken"
 import { checkLawyerAuthorization } from "../lawyer/checkLawyerAuthorization"
 
 export async function getUserOrLawyerFromAuth({ role, id }: IAuthPayload) {

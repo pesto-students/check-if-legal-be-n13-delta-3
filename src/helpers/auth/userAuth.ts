@@ -1,8 +1,8 @@
 import { Request } from "express"
-import { IAuthPayload, validateAuthToken } from "."
-import { AuthRole } from "../enums"
+import { IAuthPayload, validateAuthToken } from "./authToken"
+import { AuthRole } from "../../core/enums"
 import _ from "lodash"
-import { UnauthorisedError, UnprocessableEntityError } from "../http"
+import { UnauthorisedError, UnprocessableEntityError } from "../../core/http"
 
 export function userAuth(req: Request, allowedRoles: AuthRole[]): IAuthPayload {
 	const authHeaderValue = req.header("Authorization")

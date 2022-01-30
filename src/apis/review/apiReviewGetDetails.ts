@@ -1,7 +1,7 @@
 import { z } from "zod"
-import { userAuth } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { HttpApi, HttpMethod, UnprocessableEntityError } from "../../core/http"
+import { userAuth } from "../../helpers/auth/userAuth"
 import { listReview } from "../../services/review/listReview"
 import { sanitizeReview } from "../../services/review/sanitizeReview"
 import { getUserOrLawyerFromAuth } from "../../services/user/getUserOrLawyerFromAuth"

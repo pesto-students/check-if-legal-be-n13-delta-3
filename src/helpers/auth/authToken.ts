@@ -1,7 +1,7 @@
 import jwt, { JsonWebTokenError } from "jsonwebtoken"
-import configs from "../configs"
-import { AuthRole } from "../enums"
-import { UnauthorisedError } from "../http"
+import configs from "../../core/configs"
+import { AuthRole } from "../../core/enums"
+import { UnauthorisedError } from "../../core/http"
 
 const secret = configs.jwt.secret
 const issuer = configs.server.name

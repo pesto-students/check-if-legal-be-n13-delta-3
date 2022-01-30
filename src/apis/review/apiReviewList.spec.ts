@@ -1,16 +1,16 @@
 import { Lawyer, User } from "@prisma/client"
 import { expect } from "chai"
-import { createAuthToken } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { HttpMethod } from "../../core/http"
-import { httpApiRequest } from "../../core/test/httpApiRequest"
-import { generateLawyer } from "../../core/test/resources/lawyer"
-import { generateReview } from "../../core/test/resources/review"
-import { generateUser } from "../../core/test/resources/user"
-import { truncateDatabase } from "../../core/test/truncateDatabase"
+import { createAuthToken } from "../../helpers/auth/authToken"
+import { httpApiRequest } from "../../test/httpApiRequest"
+import { generateLawyer } from "../../test/resources/lawyer"
+import { generateReview } from "../../test/resources/review"
+import { generateUser } from "../../test/resources/user"
+import { truncateDatabase } from "../../test/truncateDatabase"
 
-const method = HttpMethod.POST
-const endpoint = "/review/list"
+const method = HttpMethod.GET
+const endpoint = "/review"
 
 describe(`API: ${endpoint}`, () => {
 	let user: User

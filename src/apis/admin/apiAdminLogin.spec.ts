@@ -1,12 +1,12 @@
 import { randPassword, randUserName } from "@ngneat/falso"
 import { expect } from "chai"
-import { validateAuthToken } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { HttpMethod, HttpStatusCode } from "../../core/http"
-import { httpApiRequest } from "../../core/test/httpApiRequest"
-import { generateAdmin } from "../../core/test/resources/admin"
-import { truncateDatabase } from "../../core/test/truncateDatabase"
+import { httpApiRequest } from "../../test/httpApiRequest"
+import { generateAdmin } from "../../test/resources/admin"
+import { truncateDatabase } from "../../test/truncateDatabase"
 import { Unpromise } from "../../core/types"
+import { validateAuthToken } from "../../helpers/auth/authToken"
 
 const method = HttpMethod.POST
 const endpoint = "/admin/login"

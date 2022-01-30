@@ -1,6 +1,6 @@
 import { randPassword, randUserName } from "@ngneat/falso"
-import { checkAdminUsernameAvailability } from "../../../services/admin/checkAdminUsernameAvailability"
-import { createAdmin } from "../../../services/admin/createAdmin"
+import { checkAdminUsernameAvailability } from "../../services/admin/checkAdminUsernameAvailability"
+import { createAdmin } from "../../services/admin/createAdmin"
 
 export async function generateAdmin() {
 	const username = await generateUniqueUsernameForAdmin()

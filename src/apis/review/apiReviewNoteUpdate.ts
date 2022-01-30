@@ -1,7 +1,7 @@
 import { z } from "zod"
-import { userAuth } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { HttpApi, HttpMethod } from "../../core/http"
+import { userAuth } from "../../helpers/auth/userAuth"
 import { updateReview } from "../../services/review/updateReview"
 
 const bodySchema = z.object({ userNote: z.string().nullable() }).strict()

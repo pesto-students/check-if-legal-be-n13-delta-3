@@ -1,7 +1,7 @@
 import { z } from "zod"
-import { userAuth } from "../../core/auth"
 import { AuthRole } from "../../core/enums"
 import { createdResponse, HttpApi, HttpMethod } from "../../core/http"
+import { userAuth } from "../../helpers/auth/userAuth"
 import { createReview } from "../../services/review/createReview"
 
 const bodySchema = z

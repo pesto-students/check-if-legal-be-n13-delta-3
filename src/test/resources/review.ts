@@ -1,4 +1,4 @@
-import { createReview } from "../../../services/review/createReview"
+import { createReview } from "../../services/review/createReview"
 import { generateLawyer } from "./lawyer"
 import { generateOffering } from "./offering"
 import { generateUser } from "./user"

@@ -1,6 +1,6 @@
 import { randJobDescriptor, randProduct } from "@ngneat/falso"
 import _ from "lodash"
-import { createOffering } from "../../../services/offering/createOffering"
+import { createOffering } from "../../services/offering/createOffering"
 import { generateLanguage } from "./language"
 import { generateLawyer } from "./lawyer"
 import { generatePaperType } from "./paperType"
