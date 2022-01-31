@@ -4,7 +4,7 @@ import { createAdmin } from "../../services/admin/createAdmin"
 
 export async function generateAdmin() {
 	const username = await getAvailableAdminUsername()
-	const password = randPassword()
+	const password = randPassword({ size: 10 })
 
 	const created = await createAdmin({ username, password })
 	return { ...created, password }
