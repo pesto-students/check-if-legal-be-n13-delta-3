@@ -1,3 +1,4 @@
 import { apiLawyerRegistration } from "./apiLawyerRegistration"
+import { apiLawyerList } from "./apiLawyerList"
 
-export default [apiLawyerRegistration]
+export default [apiLawyerRegistration, apiLawyerList]
