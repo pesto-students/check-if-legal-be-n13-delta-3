@@ -13,7 +13,7 @@ import { generateUser } from "../../test/resources/user"
 import { truncateDatabase } from "../../test/truncateDatabase"
 
 const method = HttpMethod.POST
-const endpoint = "/lawyer/proof"
+const endpoint = "/lawyer/self/proof"
 
 describe(`API: ${endpoint}`, () => {
 	let auth: string

@@ -27,7 +27,7 @@ const upload = multer({
 
 export const apiLawyerProofUpload = new HttpApi({
 	method: HttpMethod.POST,
-	endpoint: "/lawyer/proof",
+	endpoint: "/lawyer/self/proof",
 	middlewares: [upload.array("proofs", 4)],
 	handler: async ({ req }) => {
 		const authPayload = userAuth(req, [AuthRole.LAWYER])
