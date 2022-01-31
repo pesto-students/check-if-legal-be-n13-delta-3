@@ -12,7 +12,7 @@ model Admin {
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
     username       String   @unique @db.VarChar(20)
-    hashedPassword String   @db.VarChar(255)
+    hashedPassword String
 }
 
 model GoogleOAuth {
