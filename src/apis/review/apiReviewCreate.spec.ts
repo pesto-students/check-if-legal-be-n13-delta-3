@@ -21,14 +21,6 @@ describe(`API: ${endpoint}`, () => {
 		userId = (await generateUser()).id
 	})
 
-	/**
-	 * Fail cases
-	 */
-	it(`Fail`)
-
-	/**
-	 * Success cases
-	 */
 	it(`Success`, async () => {
 		const auth = createAuthToken({ id: userId, role: AuthRole.USER })
 		const { id: lawyerId, cityId } = await generateLawyer({ isVerified: true })

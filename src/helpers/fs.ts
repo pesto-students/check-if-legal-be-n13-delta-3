@@ -20,3 +20,7 @@ export async function createDirIfNotExists(dir: PathLike) {
 		await fs.mkdir(dir, { recursive: true })
 	}
 }
+
+export async function getDirFiles(dir: PathLike) {
+	return await fs.readdir(dir)
+}

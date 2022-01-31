@@ -21,7 +21,8 @@ const bodySchema = z
 const upload = multer({
 	dest: "temp/",
 	fileFilter: (_req, file, cb) => {
-		if (!["image/png", "image/jpeg"].includes(file.mimetype)) {
+		const allowedTypes = ["image/png", "image/jpeg"]
+		if (!allowedTypes.includes(file.mimetype)) {
 			return cb(new BadRequestError("Wrong file type"))
 		}
 		cb(null, true)
@@ -34,6 +35,8 @@ export const apiLawyerRegistration = new HttpApi({
 	bodySchema,
 	middlewares: [upload.array("proofs", 4)],
 	handler: async ({ req, body }) => {
+		const { id: userId } = userAuth(req, [AuthRole.LAWYER])
+
 		if (!req.files) throw new BadRequestError("Files required")
 		let proofFiles: Express.Multer.File[] = []
 		if (_.isArray(req.files)) {
@@ -44,7 +47,6 @@ export const apiLawyerRegistration = new HttpApi({
 			throw new BadRequestError("Identity proof files required")
 		}
 
-		const { id: userId } = userAuth(req, [AuthRole.LAWYER])
 		const lawyer = await createLawyer({ ...body, cityId: +body.cityId, userId })
 
 		for (const file of proofFiles) {
