@@ -1,7 +1,7 @@
 import path from "path"
 
-export function getLawyerIdProofsDirPath(lawyerId: number) {
-	return path.join("storage", "lawyer", lawyerId.toString(), "idProofs")
+export function getLawyerProofDirPath(lawyerId: number) {
+	return path.join("storage", "lawyer", lawyerId.toString(), "proofs")
 }
 
 export function getReviewDocsDirPath(reviewId: number) {
