@@ -5,11 +5,10 @@ import {
 	randStreetAddress,
 } from "@ngneat/falso"
 import { expect } from "chai"
-import { readFileSync } from "fs"
 import { AuthRole } from "../../core/enums"
 import { HttpMethod, HttpStatusCode } from "../../core/http"
 import { createAuthToken } from "../../helpers/auth/authToken"
-import { getTestAssetsPath } from "../../test/helpers"
+import { listLawyer } from "../../services/lawyer/listLawyer"
 import { httpApiRequest } from "../../test/httpApiRequest"
 import { generateCity } from "../../test/resources/city"
 import { generateUser } from "../../test/resources/user"
@@ -42,21 +41,27 @@ describe(`API: ${endpoint}`, () => {
 		const address = randStreetAddress()
 		const description = randJobDescriptor()
 		const phone = randPhoneNumber()
-		const proofs = [
-			readFileSync(getTestAssetsPath("document.jpg")),
-			readFileSync(getTestAssetsPath("document.jpg")),
-		]
 
 		const res = await httpApiRequest({
 			method,
 			endpoint,
 			auth,
 			body: { cityId, name, address, description, phone },
-			isMultipartFormData: true,
-			files: { proofs },
 			expectedStatusCode: HttpStatusCode.CREATED,
 		})
 		expect(res).exist
 		expect(res.id).exist
+
+		const [lawyer] = await listLawyer({ filter: { id: res.id } })
+		expect(lawyer).exist
+		expect(lawyer.id).equal(res.id)
+		expect(lawyer.name).equal(name)
+		expect(lawyer.address).equal(address)
+		expect(lawyer.description).equal(description)
+		expect(lawyer.phone).equal(phone)
+		expect(lawyer.cityId).equal(cityId)
+		expect(lawyer.isAvailable).equal(true)
+		expect(lawyer.isSuspended).equal(false)
+		expect(lawyer.isVerified).equal(false)
 	})
 })
