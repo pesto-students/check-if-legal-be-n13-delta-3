@@ -8,6 +8,7 @@
 	"license": "MIT",
 	"scripts": {
 		"test": "mocha",
+		"coverage": "nyc mocha",
 		"dev": "nodemon src/index.ts",
 		"clean": "rimraf dist/",
 		"build": "npm run clean && tsc -p tsconfig.build.json",
@@ -51,6 +52,7 @@
 		"chai-things": "^0.2.0",
 		"mocha": "^9.1.4",
 		"nodemon": "^2.0.15",
+		"nyc": "^15.1.0",
 		"prisma": "^3.8.1",
 		"rimraf": "^3.0.2",
 		"ts-node": "^10.4.0",
