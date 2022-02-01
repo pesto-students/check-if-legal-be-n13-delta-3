@@ -10,23 +10,20 @@ import { getUserOrLawyerFromAuth } from "../../../services/user/getUserOrLawyerF
 export const apiReviewFeedbackDelete = new HttpApi({
 	method: HttpMethod.DELETE,
 	endpoint: "/review/:reviewId/feedback/:id",
-	paramsSchema: z
-		.object({
-			reviewId: z.number().int(),
-			id: z.number().int(),
-		})
-		.strict(),
-	handler: async ({ req, params: { reviewId, id } }) => {
+	paramsSchema: z.object({ reviewId: z.string(), id: z.string() }).strict(),
+	handler: async ({ req, params }) => {
 		const authPayload = userAuth(req, [AuthRole.USER, AuthRole.LAWYER])
 		const { userId, lawyerId } = await getUserOrLawyerFromAuth(authPayload)
 		const isLawyer = authPayload.role === AuthRole.LAWYER
 
-		const [review] = await listReview({ filter: { id: reviewId, userId, lawyerId } })
-		if (!review) throw new UnprocessableEntityError("Invalid review")
+		const reviewId = +params.reviewId
+		const id = +params.id
 
-		const [reviewFeedback] = await listReviewFeedback({
-			filter: { id, reviewId, byLawyer: isLawyer },
-		})
+		const [review, reviewFeedback] = await Promise.all([
+			listReview({ filter: { id: reviewId, userId, lawyerId } }),
+			listReviewFeedback({ filter: { id, reviewId, byLawyer: isLawyer } }),
+		])
+		if (!review) throw new UnprocessableEntityError("Invalid review")
 		if (!reviewFeedback) {
 			throw new UnprocessableEntityError("Invalid review feedback")
 		}
