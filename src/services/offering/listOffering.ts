@@ -13,6 +13,7 @@ export async function listOffering({
 		paperTypeId,
 		isAvailable,
 	} = {},
+	pagination: { limit = 10, pageNo = 1 } = {},
 	include,
 }: {
 	filter?: {
@@ -25,7 +26,8 @@ export async function listOffering({
 		maxPrice?: number
 		isAvailable?: boolean
 	}
-	include?: { lawyer?: boolean; paperType?: boolean }
+	pagination?: { limit?: number; pageNo?: number }
+	include?: { lawyer?: boolean; paperType?: boolean; language?: boolean }
 } = {}): Promise<Offering[]> {
 	return await prisma.offering.findMany({
 		where: {
@@ -41,6 +43,8 @@ export async function listOffering({
 				...(_.isBoolean(isLawyerAvailable) && { isAvailable: isLawyerAvailable }),
 				...(cityId && { cityId }),
 			},
+			...(limit && { take: limit }),
+			...(pageNo && { skip: (pageNo - 1) * limit }),
 		},
 		include,
 	})

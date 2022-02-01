@@ -7,6 +7,7 @@ export async function httpApiRequest({
 	method,
 	endpoint,
 	body,
+	query,
 	files,
 	auth,
 	expectedStatusCode = HttpStatusCode.OK,
@@ -15,6 +16,7 @@ export async function httpApiRequest({
 	method: HttpMethod
 	endpoint: string
 	body?: string | object
+	query?: string | object
 	files?: {
 		[key: string]:
 			| Parameters<typeof client.attach>[1]
@@ -50,6 +52,8 @@ export async function httpApiRequest({
 	} else {
 		if (body) client.send(body)
 	}
+
+	if (query) client.query(query)
 
 	const response = await client
 	expect(response.status).equal(
