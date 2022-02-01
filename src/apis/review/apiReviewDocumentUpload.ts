@@ -1,12 +1,19 @@
+import { ReviewStatus } from "@prisma/client"
 import _ from "lodash"
 import multer from "multer"
 import { z } from "zod"
 import { AuthRole } from "../../core/enums"
-import { BadRequestError, HttpApi, HttpMethod } from "../../core/http"
+import {
+	BadRequestError,
+	HttpApi,
+	HttpMethod,
+	UnprocessableEntityError,
+} from "../../core/http"
 import { userAuth } from "../../helpers/auth/userAuth"
 import { getReviewDocsDirPath } from "../../helpers/directoryPaths"
 import { copyFile } from "../../helpers/fs"
 import { listReview } from "../../services/review/listReview"
+import { updateReview } from "../../services/review/updateReview"
 
 const paramsSchema = z.object({ reviewId: z.string() }).strict()
 
@@ -41,10 +48,20 @@ export const apiReviewDocumentUpload = new HttpApi({
 
 		const [review] = await listReview({ filter: { id: reviewId, userId } })
 		if (!review) throw new BadRequestError("Invalid review")
+		if (review.status === ReviewStatus.CLOSED) {
+			throw new UnprocessableEntityError("Review is closed")
+		}
 
 		for (const file of documents) {
 			const dest = getReviewDocsDirPath(reviewId)
 			await copyFile({ src: file.path, dest, fileName: file.originalname })
+		}
+
+		if (review.status === ReviewStatus.INITIAL) {
+			await updateReview({
+				filter: { id: reviewId },
+				update: { status: ReviewStatus.WAITING_FOR_PAYMENT },
+			})
 		}
 	},
 })
