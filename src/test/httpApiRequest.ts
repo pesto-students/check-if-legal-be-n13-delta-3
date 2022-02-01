@@ -26,7 +26,7 @@ export async function httpApiRequest({
 	expectedStatusCode?: HttpStatusCode
 	isMultipartFormData?: boolean
 }): Promise<any> {
-	const client = method === "post" ? requester.post(endpoint) : requester.get(endpoint)
+	const client = requester[method](endpoint)
 
 	const authToken = auth || undefined
 	if (authToken) client.set("Authorization", `Bearer ${authToken}`)

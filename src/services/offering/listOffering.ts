@@ -43,9 +43,9 @@ export async function listOffering({
 				...(_.isBoolean(isLawyerAvailable) && { isAvailable: isLawyerAvailable }),
 				...(cityId && { cityId }),
 			},
-			...(limit && { take: limit }),
-			...(pageNo && { skip: (pageNo - 1) * limit }),
 		},
+		...(limit && { take: limit }),
+		...(pageNo && { skip: (pageNo - 1) * limit }),
 		include,
 	})
 }

@@ -34,8 +34,8 @@ describe(`API: ${endpoint}`, () => {
 		const res = await httpApiRequest({ method, endpoint, auth })
 		expect(res).exist
 
-		let expectedListCount = offerings.filter((el) => el.lawyerId === lawyer.id)
-		expect(res.length).equal(expectedListCount)
+		let expectedList = offerings.filter((el) => el.lawyerId === lawyer.id)
+		expect(res.length).equal(expectedList.length)
 
 		for (const el of res) expectOfferingSchema(el)
 	})
