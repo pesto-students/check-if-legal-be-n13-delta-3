@@ -1,3 +1,4 @@
+import { apiReviewClose } from "./apiReviewClose"
 import { apiReviewCreate } from "./apiReviewCreate"
 import { apiReviewDocumentUpload } from "./apiReviewDocumentUpload"
 import { apiReviewGetDetails } from "./apiReviewGetDetails"
@@ -11,5 +12,6 @@ export default [
 	apiReviewList,
 	apiReviewGetDetails,
 	apiReviewNoteUpdate,
+	apiReviewClose,
 	...reviewFeedbackApis,
 ]

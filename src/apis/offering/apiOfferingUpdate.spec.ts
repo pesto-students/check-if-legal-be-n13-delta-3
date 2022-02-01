@@ -43,6 +43,7 @@ describe(`API: ${getEndpoint(":id")}`, () => {
 			price?: boolean
 			description?: boolean
 			expectedTimeInHours?: boolean
+			isAvailable?: boolean
 		},
 	][] = [
 		["update paper-type", { paperType: true }],
@@ -50,6 +51,7 @@ describe(`API: ${getEndpoint(":id")}`, () => {
 		["update price", { price: true }],
 		["update description", { description: true }],
 		["update expectedTimeInHours", { expectedTimeInHours: true }],
+		["update isAvailable", { isAvailable: true }],
 	]
 
 	for (const [desc, toUpdate] of possibilities) {
@@ -59,6 +61,7 @@ describe(`API: ${getEndpoint(":id")}`, () => {
 			const price = randomOfferingPrice()
 			const expectedTimeInHours = randomOfferingTimeDuration()
 			const description = randJobDescriptor()
+			const isAvailable = false
 
 			const res = await httpApiRequest({
 				method,
@@ -70,6 +73,7 @@ describe(`API: ${getEndpoint(":id")}`, () => {
 					...(toUpdate.price && { price }),
 					...(toUpdate.expectedTimeInHours && { expectedTimeInHours }),
 					...(toUpdate.description && { description }),
+					...(toUpdate.isAvailable && { isAvailable }),
 				},
 			})
 			expect(res).exist

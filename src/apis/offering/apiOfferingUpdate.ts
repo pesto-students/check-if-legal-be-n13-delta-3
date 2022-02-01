@@ -12,6 +12,7 @@ const bodySchema = z
 		description: z.string().max(1000).optional(),
 		expectedTimeInHours: z.number().int().positive().optional(),
 		price: z.number().positive().optional(),
+		isAvailable: z.boolean().optional(),
 	})
 	.strict()
 
