@@ -1,3 +1,4 @@
 import { apiOfferingCreate } from "./apiOfferingCreate"
+import { apiOfferingList } from "./apiOfferingList"
 
-export default [apiOfferingCreate]
+export default [apiOfferingCreate, apiOfferingList]
