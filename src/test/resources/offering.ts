@@ -21,8 +21,8 @@ export async function generateOffering({
 	if (!languageId) languageId = (await generateLanguage()).id
 
 	const description = randJobDescriptor()
-	const price = +randProduct().price
-	const expectedTimeInHours = _.random(48, 72)
+	const price = randomOfferingPrice()
+	const expectedTimeInHours = randomOfferingTimeDuration()
 
 	return await createOffering({
 		lawyerId,
@@ -33,4 +33,12 @@ export async function generateOffering({
 		description,
 		isAvailable,
 	})
+}
+
+export function randomOfferingPrice() {
+	return +randProduct().price
+}
+
+export function randomOfferingTimeDuration() {
+	return _.random(48, 72)
 }

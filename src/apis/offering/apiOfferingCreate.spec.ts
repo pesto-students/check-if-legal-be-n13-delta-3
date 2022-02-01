@@ -1,7 +1,6 @@
-import { randJobDescriptor, randProduct } from "@ngneat/falso"
+import { randJobDescriptor } from "@ngneat/falso"
 import { Lawyer } from "@prisma/client"
 import { expect } from "chai"
-import _ from "lodash"
 import { AuthRole } from "../../core/enums"
 import { HttpMethod, HttpStatusCode } from "../../core/http"
 import { createAuthToken } from "../../helpers/auth/authToken"
@@ -9,6 +8,10 @@ import { listOffering } from "../../services/offering/listOffering"
 import { httpApiRequest } from "../../test/httpApiRequest"
 import { generateLanguage } from "../../test/resources/language"
 import { generateLawyer } from "../../test/resources/lawyer"
+import {
+	randomOfferingPrice,
+	randomOfferingTimeDuration,
+} from "../../test/resources/offering"
 import { generatePaperType } from "../../test/resources/paperType"
 import { truncateDatabase } from "../../test/truncateDatabase"
 
@@ -29,8 +32,8 @@ describe(`API: ${endpoint}`, () => {
 		const languageId = (await generateLanguage()).id
 		const paperTypeId = (await generatePaperType()).id
 		const description = randJobDescriptor()
-		const price = +randProduct().price
-		const expectedTimeInHours = _.random(48, 72)
+		const price = randomOfferingPrice()
+		const expectedTimeInHours = randomOfferingTimeDuration()
 
 		const res = await httpApiRequest({
 			method,

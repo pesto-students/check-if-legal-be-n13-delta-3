@@ -19,6 +19,7 @@ export const apiOfferingList = new HttpApi({
 	handler: async ({ req, body }) => {
 		const { id: userId } = userAuth(req, [AuthRole.LAWYER])
 		const [lawyer] = await listLawyer({ filter: { userId } })
+		if (!lawyer) throw new ForbiddenError("Invalid Lawyer")
 		if (lawyer.isSuspended) throw new ForbiddenError("Lawyer is suspended")
 
 		return await listOffering({
