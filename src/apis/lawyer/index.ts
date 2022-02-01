@@ -3,6 +3,7 @@ import { apiLawyerList } from "./apiLawyerList"
 import { apiLawyerSelfGet } from "./apiLawyerSelfGet"
 import { apiLawyerProofUpload } from "./apiLawyerProofUpload"
 import { apiLawyerVerify } from "./apiLawyerVerify"
+import lawyerBankApis from "./bank"
 
 export default [
 	apiLawyerRegistration,
@@ -10,4 +11,5 @@ export default [
 	apiLawyerSelfGet,
 	apiLawyerProofUpload,
 	apiLawyerVerify,
+	...lawyerBankApis,
 ]
