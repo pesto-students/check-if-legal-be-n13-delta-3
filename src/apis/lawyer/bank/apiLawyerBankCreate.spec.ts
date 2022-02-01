@@ -13,7 +13,7 @@ import { truncateDatabase } from "../../../test/truncateDatabase"
 const method = HttpMethod.POST
 const endpoint = "/lawyer/bank"
 
-describe(`API: ${endpoint}`, () => {
+describe(`API: ${method} ${endpoint}`, () => {
 	let lawyer: Lawyer
 	let auth: string
 
