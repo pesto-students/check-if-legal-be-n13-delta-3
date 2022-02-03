@@ -1,3 +1,4 @@
+import { apiCityCreate } from "./apiCityCreate"
 import { apiCityList } from "./apiCityList"
 
-export default [apiCityList]
+export default [apiCityCreate, apiCityList]
