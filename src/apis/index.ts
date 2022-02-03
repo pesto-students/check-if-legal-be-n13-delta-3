@@ -3,6 +3,7 @@ import cityApis from "./city"
 import lawyerApis from "./lawyer"
 import offeringApis from "./offering"
 import reviewApis from "./review"
+import stateApis from "./state"
 import userApis from "./user"
 
 export default [
@@ -12,4 +13,5 @@ export default [
 	...lawyerApis,
 	...offeringApis,
 	...cityApis,
+	...stateApis,
 ]
