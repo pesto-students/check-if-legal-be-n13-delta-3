@@ -1,5 +1,6 @@
 import adminApis from "./admin"
 import cityApis from "./city"
+import languageApis from "./language"
 import lawyerApis from "./lawyer"
 import offeringApis from "./offering"
 import reviewApis from "./review"
@@ -14,4 +15,5 @@ export default [
 	...offeringApis,
 	...cityApis,
 	...stateApis,
+	...languageApis,
 ]
