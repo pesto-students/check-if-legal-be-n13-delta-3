@@ -78,11 +78,13 @@ model State {
 
 model City {
     id      Int      @id @default(autoincrement())
-    name    String   @unique @db.VarChar(100)
+    name    String   @db.VarChar(100)
     stateId Int
     state   State    @relation(fields: [stateId], references: [id])
     lawyers Lawyer[]
     review  Review[]
+
+    @@unique([name, stateId])
 }
 
 model Language {
