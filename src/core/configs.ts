@@ -14,4 +14,11 @@ export default {
 	jwt: {
 		secret: process.env.JWT_SECRET || "secret",
 	},
+	googleAuth: {
+		clientId: process.env.GOOGLE_AUTH_CLIENT_ID || null,
+	},
+	razorpay: {
+		idKey: process.env.RAZORPAY_ID_KEY || null,
+		secretKey: process.env.RAZORPAY_SECRET_KEY || null,
+	},
 }

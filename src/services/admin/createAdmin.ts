@@ -1,5 +1,6 @@
-import { Admin, PrismaClient } from "@prisma/client"
-import { generateHash } from "../../core/helpers/hash"
+import { Admin } from "@prisma/client"
+import { generateHash } from "../../helpers/hash"
+import { prisma } from "../../core/prisma"
 import { checkAdminUsernameAvailability } from "./checkAdminUsernameAvailability"
 
 export async function createAdmin({
@@ -9,7 +10,6 @@ export async function createAdmin({
 	username: string
 	password: string
 }): Promise<Admin> {
-	const prisma = new PrismaClient()
 	await checkAdminUsernameAvailability(username)
 	const hashedPassword = await generateHash(password)
 	return await prisma.admin.create({ data: { username, hashedPassword } })

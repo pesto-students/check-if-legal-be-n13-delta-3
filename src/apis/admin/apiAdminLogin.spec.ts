@@ -1,10 +1,12 @@
 import { randPassword, randUserName } from "@ngneat/falso"
 import { expect } from "chai"
+import { AuthRole } from "../../core/enums"
 import { HttpMethod, HttpStatusCode } from "../../core/http"
-import { httpApiRequest } from "../../core/test/httpApiRequest"
-import { generateAdmin } from "../../core/test/resources/admin"
-import { truncateDatabase } from "../../core/test/truncateDatabase"
+import { httpApiRequest } from "../../test/httpApiRequest"
+import { generateAdmin } from "../../test/resources/admin"
+import { truncateDatabase } from "../../test/truncateDatabase"
 import { Unpromise } from "../../core/types"
+import { validateAuthToken } from "../../helpers/auth/authToken"
 
 const method = HttpMethod.POST
 const endpoint = "/admin/login"
@@ -68,7 +70,7 @@ describe(`API: ${endpoint}`, () => {
 	 * Success cases
 	 */
 	it(`Success with right credentials`, async () => {
-		const { username, password } = admin
+		const { id, username, password } = admin
 
 		const res = await httpApiRequest({
 			method,
@@ -77,5 +79,9 @@ describe(`API: ${endpoint}`, () => {
 		})
 		expect(res).exist
 		expect(res.token).exist
+
+		const authPayload = validateAuthToken(res.token)
+		expect(authPayload.id).equal(id)
+		expect(authPayload.role).equal(AuthRole.ADMIN)
 	})
 })

@@ -26,7 +26,7 @@ export class HttpServer {
 		this.server.use(path, ...middlewares)
 	}
 
-	api(...httpApis: HttpApi[]) {
+	api(...httpApis: HttpApi<any, any, any>[]) {
 		httpApis.forEach((api) => {
 			const handlers = [...api.middlewares, api.callApi]
 			this.server[api.method](api.endpoint, ...handlers)

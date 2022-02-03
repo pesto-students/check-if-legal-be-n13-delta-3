@@ -1,55 +1,99 @@
 import { Request, RequestHandler, Response } from "express"
 import { z } from "zod"
+import { BadRequestError } from "."
 import configs from "../configs"
 import { HttpMethod, HttpStatusCode } from "./enums"
 import { HttpError, isHttpError } from "./HttpError"
 import { HttpResponse } from "./HttpResponse"
 
-type IHandler<T> = (payload: { req: Request; body: T }) => Promise<HttpResponse | any>
-interface IHttpApiConstructorParameters<T extends unknown> {
+type IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType> = (payload: {
+	req: Request
+	body: BodySchemaType
+	query: QuerySchemaType
+	params: ParamsSchemaType
+}) => Promise<HttpResponse | any>
+interface IHttpApiConstructorParameters<
+	BodySchemaType extends unknown,
+	QuerySchemaType extends unknown,
+	ParamsSchemaType extends unknown,
+> {
 	method: HttpMethod
 	endpoint: string
-	bodySchema?: z.Schema<T>
+	bodySchema?: z.Schema<BodySchemaType>
+	querySchema?: z.Schema<QuerySchemaType>
+	paramsSchema?: z.Schema<ParamsSchemaType>
 	options?: IOptions
 	middlewares?: RequestHandler[]
-	handler: IHandler<T>
+	handler: IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType>
 }
 
 interface IOptions {
 	hideErrorStack?: boolean
-	formData?: { autoClean?: boolean; maxFilesSize?: number; uploadDir?: string }
 }
 
-export class HttpApi<T extends unknown = unknown> {
+export class HttpApi<
+	BodySchemaType extends unknown,
+	QuerySchemaType extends unknown,
+	ParamsSchemaType extends unknown,
+> {
 	method: HttpMethod
 	endpoint: string
-	bodySchema: z.Schema<T>
+	bodySchema: z.Schema<BodySchemaType>
+	querySchema: z.Schema<QuerySchemaType>
+	paramsSchema: z.Schema<ParamsSchemaType>
 	options: IOptions
 	middlewares: RequestHandler[]
-	handler: IHandler<T>
+	handler: IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType>
 
 	callApi: RequestHandler
 
-	constructor(payload: IHttpApiConstructorParameters<T>) {
+	constructor(
+		payload: IHttpApiConstructorParameters<
+			BodySchemaType,
+			QuerySchemaType,
+			ParamsSchemaType
+		>,
+	) {
 		this.method = payload.method
 		this.endpoint = payload.endpoint
 		// @ts-ignore
 		this.bodySchema = payload.bodySchema ?? z.object({}).strict()
+		// @ts-ignore
+		this.querySchema = payload.querySchema ?? z.object({}).strict()
+		// @ts-ignore
+		this.paramsSchema = payload.paramsSchema ?? z.object({}).strict()
 
 		const defaultOptions: IOptions = {
 			hideErrorStack: configs.server.environment === "production",
 		}
-
 		this.options = payload.options ?? defaultOptions
 		this.handler = payload.handler
+
 		this.middlewares = payload.middlewares ?? []
 
 		this.callApi = async (req, res) => {
 			try {
 				if (res.headersSent) return
-				const body = await this.bodySchema.parseAsync(req.body)
-				const responseObject = await this.handler({ req, body })
-				sendJsonResponse(res, responseObject)
+
+				try {
+					const [body, query, params] = await Promise.all([
+						this.bodySchema.parseAsync(req.body),
+						this.querySchema.parseAsync(req.query),
+						this.paramsSchema.parseAsync(req.params),
+					])
+					const responseObject = await this.handler({
+						req,
+						body,
+						query,
+						params,
+					})
+					sendJsonResponse(res, responseObject)
+				} catch (err) {
+					if (err instanceof z.ZodError) {
+						throw new BadRequestError(err.message, err.stack)
+					}
+					throw err
+				}
 			} catch (err) {
 				sendErrorResponse(res, err)
 			}
