@@ -1,3 +1,5 @@
+import { RazorpayOrderStatus } from "./RazorpayOrderStatus"
+
 export interface IRazorpayOrderEntity {
 	/**
 	 * The unique identifier of the order.
@@ -57,10 +59,4 @@ export interface IRazorpayOrderEntity {
 	 * Indicates the Unix timestamp when this order was created
 	 */
 	created_at: number
-}
-
-export enum RazorpayOrderStatus {
-	CREATED = "created",
-	ATTEMPTED = "attempted",
-	PAID = "paid",
 }
