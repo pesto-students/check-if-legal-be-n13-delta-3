@@ -10,7 +10,8 @@ import {
 } from "../../core/http"
 import { userAuth } from "../../helpers/auth/userAuth"
 import { getLawyerProofDirPath } from "../../helpers/directoryPaths"
-import { copyFile } from "../../helpers/fs"
+import { encryptFile } from "../../helpers/encrypt"
+import { saveFile } from "../../helpers/fs"
 import { listLawyer } from "../../services/lawyer/listLawyer"
 import { getUserOrLawyerFromAuth } from "../../services/user/getUserOrLawyerFromAuth"
 
@@ -49,8 +50,9 @@ export const apiLawyerProofUpload = new HttpApi({
 		}
 
 		for (const file of proofFiles) {
+			const encryptedFile = await encryptFile(file.path)
 			const dest = getLawyerProofDirPath(lawyer.id)
-			await copyFile({ src: file.path, dest, fileName: file.originalname })
+			await saveFile(dest, encryptedFile, file.originalname)
 		}
 	},
 })
