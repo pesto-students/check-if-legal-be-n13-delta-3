@@ -75,4 +75,13 @@ describe(`API: ${getEndpoint(":id")}`, () => {
 			expectedStatusCode: HttpStatusCode.UNPROCESSABLE_ENTITY,
 		})
 	})
+
+	it(`Fail: deleting invalid state`, async () => {
+		await httpApiRequest({
+			method,
+			endpoint: getEndpoint(states[0].id),
+			auth,
+			expectedStatusCode: HttpStatusCode.UNPROCESSABLE_ENTITY,
+		})
+	})
 })
