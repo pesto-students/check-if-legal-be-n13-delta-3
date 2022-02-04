@@ -1,15 +1,15 @@
 import { expect } from "chai"
 import { readFileSync } from "fs"
-import { AuthRole } from "../../core/enums"
-import { HttpMethod, HttpStatusCode } from "../../core/http"
-import { createAuthToken } from "../../helpers/auth/authToken"
-import { getReviewDocsDirPath } from "../../helpers/directoryPaths"
-import { getDirFiles } from "../../helpers/fs"
-import { getTestAssetsPath } from "../../test/helpers"
-import { httpApiRequest } from "../../test/httpApiRequest"
-import { generateReview } from "../../test/resources/review"
-import { generateUser } from "../../test/resources/user"
-import { truncateDatabase } from "../../test/truncateDatabase"
+import { AuthRole } from "../../../core/enums"
+import { HttpMethod, HttpStatusCode } from "../../../core/http"
+import { createAuthToken } from "../../../helpers/auth/authToken"
+import { getReviewDocsDirPath } from "../../../helpers/directoryPaths"
+import { getDirFiles } from "../../../helpers/fs"
+import { getTestAssetsPath } from "../../../test/helpers"
+import { httpApiRequest } from "../../../test/httpApiRequest"
+import { generateReview } from "../../../test/resources/review"
+import { generateUser } from "../../../test/resources/user"
+import { truncateDatabase } from "../../../test/truncateDatabase"
 
 const method = HttpMethod.POST
 function getEndpoint(reviewId: number | string) {
@@ -25,11 +25,6 @@ describe(`API: ${method} ${getEndpoint(":reviewId")}`, () => {
 		userId = (await generateUser()).id
 		auth = createAuthToken({ id: userId, role: AuthRole.USER })
 	})
-
-	/**
-	 * Fail cases
-	 */
-	it(`Fail`)
 
 	/**
 	 * Success cases
