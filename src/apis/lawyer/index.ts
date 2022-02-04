@@ -1,15 +1,15 @@
-import { apiLawyerRegistration } from "./apiLawyerRegistration"
 import { apiLawyerList } from "./apiLawyerList"
+import { apiLawyerRegistration } from "./apiLawyerRegister"
 import { apiLawyerSelfGet } from "./apiLawyerSelfGet"
-import { apiLawyerProofUpload } from "./apiLawyerProofUpload"
 import { apiLawyerVerify } from "./apiLawyerVerify"
 import lawyerBankApis from "./bank"
+import lawyerProofApis from "./proof"
 
 export default [
 	apiLawyerRegistration,
 	apiLawyerList,
 	apiLawyerSelfGet,
-	apiLawyerProofUpload,
 	apiLawyerVerify,
 	...lawyerBankApis,
+	...lawyerProofApis,
 ]
