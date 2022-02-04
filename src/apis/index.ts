@@ -6,6 +6,7 @@ import offeringApis from "./offering"
 import reviewApis from "./review"
 import stateApis from "./state"
 import userApis from "./user"
+import paperTypeApis from "./paperType"
 
 export default [
 	...adminApis,
@@ -16,4 +17,5 @@ export default [
 	...cityApis,
 	...stateApis,
 	...languageApis,
+	...paperTypeApis,
 ]
