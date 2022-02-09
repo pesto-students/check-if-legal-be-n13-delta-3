@@ -4,7 +4,9 @@ import { HttpApi, HttpMethod } from "../../core/http"
 import { userAuth } from "../../helpers/auth/userAuth"
 import { updateCity } from "../../services/city/updateCity"
 
-const bodySchema = z.object({ name: z.string().max(100).optional() }).strict()
+const bodySchema = z
+	.object({ name: z.string().max(100).optional(), stateId: z.number().optional() })
+	.strict()
 
 export const apiCityUpdate = new HttpApi({
 	method: HttpMethod.PATCH,

@@ -7,7 +7,7 @@ export async function updateCity({
 	update,
 }: {
 	filter: { id: number }
-	update: { name?: string }
+	update: { name?: string; stateId?: number }
 }): Promise<City> {
 	const city = await prisma.city.findFirst({
 		where: filter,
@@ -15,8 +15,9 @@ export async function updateCity({
 	})
 	if (!city) throw new Error("Invalid city")
 
-	if (update.name) {
-		await checkCityNameAvailability({ name: update.name, stateId: city.state.id })
-	}
+	await checkCityNameAvailability({
+		name: update.name ?? city.name,
+		stateId: update.stateId ?? city.stateId,
+	})
 	return await prisma.city.update({ where: filter, data: update })
 }

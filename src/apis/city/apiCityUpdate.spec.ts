@@ -6,7 +6,7 @@ import { createAuthToken } from "../../helpers/auth/authToken"
 import { listCity } from "../../services/city/listCity"
 import { httpApiRequest } from "../../test/httpApiRequest"
 import { generateAdmin } from "../../test/resources/admin"
-import { generateCity } from "../../test/resources/city"
+import { generateCity, getAvailableCityName } from "../../test/resources/city"
 import { generateState } from "../../test/resources/state"
 import { truncateDatabase } from "../../test/truncateDatabase"
 
@@ -15,18 +15,13 @@ function getEndpoint(cityId: number | string) {
 	return `/city/${cityId}`
 }
 
-describe(`API: ${getEndpoint(":id")}`, () => {
+describe(`API: ${method} ${getEndpoint(":id")}`, () => {
 	let auth: string
-	let cityId: number
-	let stateId: number
 
 	before(async () => {
 		await truncateDatabase()
 		const admin = await generateAdmin()
 		auth = createAuthToken({ id: admin.id, role: AuthRole.ADMIN })
-
-		stateId = (await generateState()).id
-		cityId = (await generateCity({ stateId })).id
 	})
 
 	/**
@@ -34,6 +29,7 @@ describe(`API: ${getEndpoint(":id")}`, () => {
 	 */
 	it(`Authentication: Fail without token`, async () => {
 		const name = randCity()
+		const cityId = (await generateCity()).id
 
 		await httpApiRequest({
 			method,
@@ -43,36 +39,50 @@ describe(`API: ${getEndpoint(":id")}`, () => {
 		})
 	})
 
+	const possibilities: [string, { name?: boolean; stateId?: boolean }][] = [
+		["update name", { name: true }],
+		["update stateId", { stateId: true }],
+	]
+
 	/**
 	 * Success Cases
 	 */
-	it(`Success`, async () => {
-		const name = randCity()
+	for (const [desc, toUpdate] of possibilities) {
+		it(`Success ${desc}`, async () => {
+			const city = await generateCity()
 
-		const res = await httpApiRequest({
-			method,
-			endpoint: getEndpoint(cityId),
-			auth,
-			body: { name },
-			expectedStatusCode: HttpStatusCode.NO_CONTENT,
+			const stateId = toUpdate.stateId ? (await generateState()).id : undefined
+			const name = toUpdate.name
+				? await getAvailableCityName(stateId ?? city.stateId)
+				: undefined
+
+			const res = await httpApiRequest({
+				method,
+				endpoint: getEndpoint(city.id),
+				auth,
+				body: { name, stateId },
+				expectedStatusCode: HttpStatusCode.NO_CONTENT,
+			})
+			expect(res).empty
+
+			const cities = await listCity({ filter: { id: city.id } })
+			expect(cities[0]).exist
+			expect(cities[0].id).equal(city.id)
+			expect(cities[0].name).equal(name ?? city.name)
+			expect(cities[0].stateId).equal(stateId ?? city.stateId)
 		})
-		expect(res).empty
-
-		const [city] = await listCity({ filter: { id: cityId } })
-		expect(city).exist
-		expect(city.id).equal(cityId)
-		expect(city.name).equal(name)
-	})
+	}
 
 	/**
 	 * Fail Cases
 	 */
 	it(`Fail: updating already exist city name in same state`, async () => {
-		const city2 = await generateCity({ stateId })
+		const city = await generateCity()
+		const city2 = await generateCity({ stateId: city.stateId })
 
 		await httpApiRequest({
 			method,
-			endpoint: getEndpoint(cityId),
+			endpoint: getEndpoint(city.id),
 			auth,
 			body: { name: city2.name },
 			expectedStatusCode: HttpStatusCode.CONFLICT,
