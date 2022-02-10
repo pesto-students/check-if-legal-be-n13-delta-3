@@ -39,3 +39,10 @@ export async function deleteDir(dir: PathLike) {
 	await deleteAllDirFiles(dir)
 	await fs.rmdir(dir)
 }
+
+export async function saveFile(dir: PathLike, data: Buffer, fileName: string) {
+	await createDirIfNotExists(dir)
+
+	const fullPath = path.join(dir.toString(), fileName)
+	await fs.writeFile(fullPath, data)
+}

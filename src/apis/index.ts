@@ -1,9 +1,12 @@
 import adminApis from "./admin"
 import cityApis from "./city"
+import languageApis from "./language"
 import lawyerApis from "./lawyer"
 import offeringApis from "./offering"
 import reviewApis from "./review"
+import stateApis from "./state"
 import userApis from "./user"
+import paperTypeApis from "./paperType"
 
 export default [
 	...adminApis,
@@ -12,4 +15,7 @@ export default [
 	...lawyerApis,
 	...offeringApis,
 	...cityApis,
+	...stateApis,
+	...languageApis,
+	...paperTypeApis,
 ]

@@ -21,4 +21,7 @@ export default {
 		idKey: process.env.RAZORPAY_ID_KEY || null,
 		secretKey: process.env.RAZORPAY_SECRET_KEY || null,
 	},
+	encrypt: {
+		secretKey: process.env.ENCRYPT_SECRET_KEY || "encrypt_secret_key",
+	},
 }

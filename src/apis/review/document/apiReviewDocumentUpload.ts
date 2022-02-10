@@ -2,18 +2,19 @@ import { ReviewStatus } from "@prisma/client"
 import _ from "lodash"
 import multer from "multer"
 import { z } from "zod"
-import { AuthRole } from "../../core/enums"
+import { AuthRole } from "../../../core/enums"
 import {
 	BadRequestError,
 	HttpApi,
 	HttpMethod,
 	UnprocessableEntityError,
-} from "../../core/http"
-import { userAuth } from "../../helpers/auth/userAuth"
-import { getReviewDocsDirPath } from "../../helpers/directoryPaths"
-import { copyFile } from "../../helpers/fs"
-import { listReview } from "../../services/review/listReview"
-import { updateReview } from "../../services/review/updateReview"
+} from "../../../core/http"
+import { userAuth } from "../../../helpers/auth/userAuth"
+import { getReviewDocsDirPath } from "../../../helpers/directoryPaths"
+import { encryptFile } from "../../../helpers/encrypt"
+import { saveFile } from "../../../helpers/fs"
+import { listReview } from "../../../services/review/listReview"
+import { updateReview } from "../../../services/review/updateReview"
 
 const paramsSchema = z.object({ reviewId: z.string() }).strict()
 
@@ -38,6 +39,7 @@ export const apiReviewDocumentUpload = new HttpApi({
 		const reviewId = +params.reviewId
 
 		if (!req.files) throw new BadRequestError("Files required")
+
 		let documents: Express.Multer.File[] = []
 		if (_.isArray(req.files)) {
 			documents = req.files.filter((file) => file.fieldname === "documents")
@@ -53,8 +55,9 @@ export const apiReviewDocumentUpload = new HttpApi({
 		}
 
 		for (const file of documents) {
+			const encryptedFile = await encryptFile(file.path)
 			const dest = getReviewDocsDirPath(reviewId)
-			await copyFile({ src: file.path, dest, fileName: file.originalname })
+			await saveFile(dest, encryptedFile, file.originalname)
 		}
 
 		if (review.status === ReviewStatus.INITIAL) {

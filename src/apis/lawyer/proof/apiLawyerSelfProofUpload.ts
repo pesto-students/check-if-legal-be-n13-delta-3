@@ -1,18 +1,19 @@
 import _ from "lodash"
 import multer from "multer"
-import { AuthRole } from "../../core/enums"
+import { AuthRole } from "../../../core/enums"
 import {
 	BadRequestError,
-	ForbiddenError,
 	HttpApi,
 	HttpMethod,
 	UnprocessableEntityError,
-} from "../../core/http"
-import { userAuth } from "../../helpers/auth/userAuth"
-import { getLawyerProofDirPath } from "../../helpers/directoryPaths"
-import { copyFile } from "../../helpers/fs"
-import { listLawyer } from "../../services/lawyer/listLawyer"
-import { getUserOrLawyerFromAuth } from "../../services/user/getUserOrLawyerFromAuth"
+	ForbiddenError,
+} from "../../../core/http"
+import { userAuth } from "../../../helpers/auth/userAuth"
+import { getLawyerProofDirPath } from "../../../helpers/directoryPaths"
+import { encryptFile } from "../../../helpers/encrypt"
+import { saveFile } from "../../../helpers/fs"
+import { listLawyer } from "../../../services/lawyer/listLawyer"
+import { getUserOrLawyerFromAuth } from "../../../services/user/getUserOrLawyerFromAuth"
 
 const upload = multer({
 	dest: "temp/",
@@ -25,7 +26,7 @@ const upload = multer({
 	},
 })
 
-export const apiLawyerProofUpload = new HttpApi({
+export const apiLawyerSelfProofUpload = new HttpApi({
 	method: HttpMethod.POST,
 	endpoint: "/lawyer/self/proof",
 	middlewares: [upload.array("proofs", 4)],
@@ -49,8 +50,9 @@ export const apiLawyerProofUpload = new HttpApi({
 		}
 
 		for (const file of proofFiles) {
+			const encryptedFile = await encryptFile(file.path)
 			const dest = getLawyerProofDirPath(lawyer.id)
-			await copyFile({ src: file.path, dest, fileName: file.originalname })
+			await saveFile(dest, encryptedFile, file.originalname)
 		}
 	},
 })
