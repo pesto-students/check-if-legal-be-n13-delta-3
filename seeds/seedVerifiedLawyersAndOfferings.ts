@@ -1,10 +1,10 @@
-import { randJobDescriptor, randPhoneNumber, randStreetAddress } from "@ngneat/falso"
+import { randPhoneNumber, randStreetAddress } from "@ngneat/falso"
 import { listCity } from "../src/services/city/listCity"
 import { listLanguage } from "../src/services/language/listLanguage"
-import { listPaperType } from "../src/services/paperType/listPaperType"
 import { createLawyer } from "../src/services/lawyer/createLawyer"
-import { createUser } from "../src/services/user/createUser"
 import { createOffering } from "../src/services/offering/createOffering"
+import { listPaperType } from "../src/services/paperType/listPaperType"
+import { createUser } from "../src/services/user/createUser"
 
 export async function seedVerifiedLawyersAndOfferings() {
 	const cityList = await listCity()
@@ -15,6 +15,8 @@ export async function seedVerifiedLawyersAndOfferings() {
 		{
 			name: "Jagdish Tyagi",
 			cityName: "Delhi",
+			description:
+				"Senior-level lawyer with vast expertise, overseeing high-level operations while mentoring junior legal staff and advising executive or C-suite employees.",
 			offerings: [
 				{
 					paperTypeName: "Property Paper",
@@ -41,6 +43,8 @@ export async function seedVerifiedLawyersAndOfferings() {
 		{
 			name: "Jagdish Mishra",
 			cityName: "Delhi",
+			description:
+				"Senior-level lawyer with vast expertise, overseeing high-level operations while mentoring junior legal staff and advising executive or C-suite employees.",
 			offerings: [
 				{
 					paperTypeName: "Property Paper",
@@ -67,6 +71,8 @@ export async function seedVerifiedLawyersAndOfferings() {
 		{
 			name: "KD Pathak",
 			cityName: "Mumbai",
+			description:
+				"Senior-level lawyer with vast expertise, overseeing high-level operations while mentoring junior legal staff and advising executive or C-suite employees.",
 			offerings: [
 				{
 					paperTypeName: "Property Paper",
@@ -98,6 +104,8 @@ export async function seedVerifiedLawyersAndOfferings() {
 		{
 			name: "Yash Mohal Jaiswal",
 			cityName: "Mumbai",
+			description:
+				"Senior-level lawyer with vast expertise, overseeing high-level operations while mentoring junior legal staff and advising executive or C-suite employees.",
 			offerings: [
 				{
 					paperTypeName: "Deed",
@@ -123,13 +131,12 @@ export async function seedVerifiedLawyersAndOfferings() {
 		},
 	]
 
-	for (const { name, cityName, offerings } of lawyers) {
+	for (const { name, cityName, offerings, description } of lawyers) {
 		const city = cityList.find((city) => city.name === cityName)
 		if (!city) throw new Error(`${cityName} city not found`)
 
 		const user = await createUser({ name, isLawyer: true })
 		const address = randStreetAddress({ length: 1 })[0]
-		const description = randJobDescriptor({ length: 1 })[0]
 		const phone = randPhoneNumber({ length: 1 })[0]
 
 		const lawyer = await createLawyer({
