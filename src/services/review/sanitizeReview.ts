@@ -1,4 +1,6 @@
 import { Review } from "@prisma/client"
+import { sanitizeLawyer } from "../lawyer/sanitizeLawyer"
+import { sanitizeUser } from "../user/sanitizeUser"
 
 export function sanitizeReview(review: Review) {
 	// @ts-ignore
