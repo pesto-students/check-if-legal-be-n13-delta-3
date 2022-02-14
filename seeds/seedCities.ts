@@ -1,16 +1,16 @@
-import { listState } from "../src/services/state/listState"
 import { createCity } from "../src/services/city/createCity"
+import { listState } from "../src/services/state/listState"
 
-async function main() {
+export async function seedCities() {
 	const stateList = await listState()
+	const cityNames = [
+		{ name: "Delhi", stateName: "Delhi" },
+		{ name: "Mumbai", stateName: "Maharashtra" },
+	]
 
-	const delhiState = stateList.find((state) => state.name === "Delhi")
-	const maharashtraState = stateList.find((state) => state.name === "Maharashtra")
-
-	if (delhiState && maharashtraState) {
-		await createCity({ name: "Delhi", stateId: delhiState.id })
-		await createCity({ name: "Mumbai", stateId: maharashtraState.id })
+	for (const { name, stateName } of cityNames) {
+		const state = stateList.find((state) => state.name === stateName)
+		if (!state) throw new Error(`${stateName} state not found`)
+		await createCity({ name, stateId: state.id })
 	}
 }
-
-main()

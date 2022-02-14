@@ -1,42 +1,46 @@
 import { createState } from "../src/services/state/createState"
 
-async function main() {
-	await createState({ name: "Andaman and Nicobar Islands" })
-	await createState({ name: "Andhra Pradesh" })
-	await createState({ name: "Arunachal Pradesh" })
-	await createState({ name: "Assam" })
-	await createState({ name: "Bihar" })
-	await createState({ name: "Chandigarh" })
-	await createState({ name: "Chhattisgarh" })
-	await createState({ name: "Dadra and Nagar Haveli and Daman and Diu" })
-	await createState({ name: "Delhi" })
-	await createState({ name: "Goa" })
-	await createState({ name: "Gujarat" })
-	await createState({ name: "Haryana" })
-	await createState({ name: "Himachal Pradesh" })
-	await createState({ name: "Jammu and Kashmir" })
-	await createState({ name: "Jharkhand" })
-	await createState({ name: "Karnataka" })
-	await createState({ name: "Kerala" })
-	await createState({ name: "Ladakh" })
-	await createState({ name: "Lakshadweep" })
-	await createState({ name: "Madhya Pradesh" })
-	await createState({ name: "Maharashtra" })
-	await createState({ name: "Manipur" })
-	await createState({ name: "Meghalaya" })
-	await createState({ name: "Mizoram" })
-	await createState({ name: "Nagaland" })
-	await createState({ name: "Odisha" })
-	await createState({ name: "Puducherry" })
-	await createState({ name: "Punjab" })
-	await createState({ name: "Rajasthan" })
-	await createState({ name: "Sikkim" })
-	await createState({ name: "Tamil Nadu" })
-	await createState({ name: "Telangana" })
-	await createState({ name: "Tripura" })
-	await createState({ name: "Uttar Pradesh" })
-	await createState({ name: "Uttarakhand" })
-	await createState({ name: "West Bengal" })
-}
+export async function seedStates() {
+	const stateNames = [
+		"Andaman and Nicobar Islands",
+		"Andhra Pradesh",
+		"Arunachal Pradesh",
+		"Assam",
+		"Bihar",
+		"Chandigarh",
+		"Chhattisgarh",
+		"Dadra and Nagar Haveli and Daman and Diu",
+		"Delhi",
+		"Goa",
+		"Gujarat",
+		"Haryana",
+		"Himachal Pradesh",
+		"Jammu and Kashmir",
+		"Jharkhand",
+		"Karnataka",
+		"Kerala",
+		"Ladakh",
+		"Lakshadweep",
+		"Madhya Pradesh",
+		"Maharashtra",
+		"Manipur",
+		"Meghalaya",
+		"Mizoram",
+		"Nagaland",
+		"Odisha",
+		"Puducherry",
+		"Punjab",
+		"Rajasthan",
+		"Sikkim",
+		"Tamil Nadu",
+		"Telangana",
+		"Tripura",
+		"Uttar Pradesh",
+		"Uttarakhand",
+		"West Bengal",
+	]
 
-main()
+	for (const name of stateNames) {
+		await createState({ name })
+	}
+}
