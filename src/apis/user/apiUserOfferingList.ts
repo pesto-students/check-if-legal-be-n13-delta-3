@@ -1,30 +1,40 @@
 import { z } from "zod"
 import { AuthRole } from "../../core/enums"
 import { HttpApi, HttpMethod } from "../../core/http"
-import { userAuth } from "../../helpers/auth/userAuth"
+import { userPublicAuth } from "../../helpers/auth/userPublicAuth"
 import { listOffering } from "../../services/offering/listOffering"
+import { sanitizeOffering } from "../../services/offering/sanitizeOffering"
 
-const bodySchema = z
+const querySchema = z
 	.object({
-		paperTypeId: z.number().int(),
-		cityId: z.number().int(),
-		languageId: z.number().int(),
-		maxPrice: z.number().int().optional(),
+		paperTypeId: z.string(),
+		cityId: z.string(),
+		languageId: z.string(),
+		maxPrice: z.string().optional(),
 	})
 	.strict()
 
 export const apiUserOfferingList = new HttpApi({
 	method: HttpMethod.GET,
 	endpoint: "/user/offering",
-	bodySchema,
-	handler: async ({ req, body }) => {
-		userAuth(req, [AuthRole.USER])
+	querySchema,
+	handler: async ({ req, query }) => {
+		const authPayload = userPublicAuth(req, [AuthRole.USER])
+		const isGuestUser = !authPayload
+
+		const { cityId, languageId, paperTypeId, maxPrice } = query
 
 		const offerings = await listOffering({
-			filter: { ...body, isAvailable: true, isLawyerAvailable: true },
+			filter: {
+				cityId: +cityId,
+				languageId: +languageId,
+				paperTypeId: +paperTypeId,
+				maxPrice: maxPrice ? +maxPrice : undefined,
+				isAvailable: true,
+				isLawyerAvailable: true,
+			},
 			include: { lawyer: true },
 		})
-
-		return offerings
+		return offerings.map((el) => sanitizeOffering(el, isGuestUser))
 	},
 })
