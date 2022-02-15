@@ -19,7 +19,14 @@ export const apiReviewDocumentList = new HttpApi({
 		const [review] = await listReview({ filter: { id: reviewId, userId, lawyerId } })
 		if (!review) throw new UnprocessableEntityError("Review not found")
 
-		const dirPath = getReviewDocsDirPath(review.id)
-		return await getDirFiles(dirPath)
+		let fileNames: string[] = []
+		try {
+			const dirPath = getReviewDocsDirPath(review.id)
+			await getDirFiles(dirPath)
+		} catch (err) {
+			return []
+		}
+
+		return fileNames
 	},
 })
