@@ -22,7 +22,7 @@ export const apiReviewDocumentList = new HttpApi({
 		let fileNames: string[] = []
 		try {
 			const dirPath = getReviewDocsDirPath(review.id)
-			await getDirFiles(dirPath)
+			fileNames = await getDirFiles(dirPath)
 		} catch (err) {
 			return []
 		}
