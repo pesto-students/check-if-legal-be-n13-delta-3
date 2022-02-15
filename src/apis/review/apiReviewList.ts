@@ -13,9 +13,6 @@ const bodySchema = z
 		status: z.nativeEnum(ReviewStatus).optional(),
 		limit: z.number().int().optional().default(10),
 		pageNo: z.number().int().optional().default(1),
-		include: z
-			.object({ lawyer: z.boolean().optional(), user: z.boolean().optional() })
-			.optional(),
 	})
 	.strict()
 
@@ -27,11 +24,17 @@ export const apiReviewList = new HttpApi({
 		const authPayload = userAuth(req, [AuthRole.USER, AuthRole.LAWYER])
 		const { userId, lawyerId } = await getUserOrLawyerFromAuth(authPayload)
 
-		const { include, limit, pageNo, paperTypeId, status } = body
+		const { limit, pageNo, paperTypeId, status } = body
 		const reviews = await listReview({
 			filter: { paperTypeId, status, userId, lawyerId },
 			pagination: { limit, pageNo },
-			include: { ...include, city: true, paperType: true, language: true },
+			include: {
+				lawyer: authPayload.role !== AuthRole.LAWYER,
+				user: authPayload.role !== AuthRole.USER,
+				city: true,
+				paperType: true,
+				language: true,
+			},
 		})
 
 		return reviews.map((review) => sanitizeReview(review))
