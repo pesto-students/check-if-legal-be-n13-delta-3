@@ -25,5 +25,6 @@ export const apiReviewPaymentGet = new HttpApi({
 			}
 			return reviewPayment
 		}
+		return null
 	},
 })

@@ -1,4 +1,4 @@
-import { ReviewPayment, ReviewPaymentStatus } from "@prisma/client"
+import { ReviewPayment, ReviewPaymentStatus, ReviewStatus } from "@prisma/client"
 import { UnprocessableEntityError } from "../../core/http"
 import { prisma } from "../../core/prisma"
 import { fetchRazorpayOrder } from "../../helpers/razorpay/fetchRazorpayOrder"
@@ -21,6 +21,13 @@ export async function updateReviewPaymentStatus({
 	const razorpayOrder = await fetchRazorpayOrder({ orderId: reviewPayment.orderId })
 
 	const status = parseReviewPaymentStatus(razorpayOrder.status)
+	if (status === ReviewPaymentStatus.PAID) {
+		await prisma.review.update({
+			where: { id: reviewId },
+			data: { status: ReviewStatus.PENDING_FOR_REVIEW },
+		})
+	}
+
 	return await prisma.reviewPayment.update({
 		where: { reviewId },
 		data: { status },
