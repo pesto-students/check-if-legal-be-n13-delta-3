@@ -24,7 +24,14 @@ export const apiLawyerSelfProofList = new HttpApi({
 			throw new ForbiddenError("Verified lawyer is not allowed to upload proofs")
 		}
 
-		const dirPath = getLawyerProofDirPath(lawyer.id)
-		return await getDirFiles(dirPath)
+		let fileNames: string[] = []
+		try {
+			const dirPath = getLawyerProofDirPath(lawyer.id)
+			fileNames = await getDirFiles(dirPath)
+		} catch (err) {
+			return []
+		}
+
+		return fileNames
 	},
 })

@@ -17,7 +17,14 @@ export const apiLawyerProofList = new HttpApi({
 		const [lawyer] = await listLawyer({ filter: { id: lawyerId } })
 		if (!lawyer) throw new UnprocessableEntityError("Lawyer not found")
 
-		const dirPath = getLawyerProofDirPath(lawyer.id)
-		return await getDirFiles(dirPath)
+		let fileNames: string[] = []
+		try {
+			const dirPath = getLawyerProofDirPath(lawyer.id)
+			fileNames = await getDirFiles(dirPath)
+		} catch (err) {
+			return []
+		}
+
+		return fileNames
 	},
 })

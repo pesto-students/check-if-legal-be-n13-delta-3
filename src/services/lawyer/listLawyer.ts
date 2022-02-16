@@ -27,10 +27,7 @@ export async function listLawyer({
 			...(_.isBoolean(isVerified) && { isVerified }),
 			...(_.isBoolean(isSuspended) && { isSuspended }),
 		},
-		include: {
-			...include,
-			...(include?.city && { city: { include: { state: true } } }),
-		},
+		include,
 		orderBy: { name: "asc" },
 		...(limit && { take: limit }),
 		...(pageNo && { skip: (pageNo - 1) * limit }),
