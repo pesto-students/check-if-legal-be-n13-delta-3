@@ -1,7 +1,7 @@
 import path from "path"
 
-export function getLawyerPictureDirPath(lawyerId: number) {
-	return path.join("static", "lawyer", lawyerId.toString())
+export function getLawyerPictureDirPath() {
+	return path.join("static", "lawyerPictures")
 }
 
 export function getLawyerProofDirPath(lawyerId: number) {

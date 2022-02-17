@@ -16,7 +16,7 @@ import { getUserOrLawyerFromAuth } from "../../../services/user/getUserOrLawyerF
 const upload = multer({
 	dest: "temp/",
 	fileFilter: (_req, file, cb) => {
-		const allowedTypes = ["image/png", "image/jpeg"]
+		const allowedTypes = ["image/jpeg"]
 		if (!allowedTypes.includes(file.mimetype)) {
 			return cb(new BadRequestError("Wrong file type"))
 		}
@@ -41,7 +41,7 @@ export const apiLawyerSelfPictureUpload = new HttpApi({
 			throw new ForbiddenError("Verified lawyer is not allowed to upload picture")
 		}
 
-		const dest = getLawyerPictureDirPath(lawyer.id)
+		const dest = getLawyerPictureDirPath()
 		const fileName = `${lawyer.id}.jpg`
 		await copyFile({ src: picture.path, dest, fileName })
 	},
