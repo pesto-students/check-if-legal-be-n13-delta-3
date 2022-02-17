@@ -13,6 +13,7 @@ server.use(helmet())
 server.use(hpp())
 server.use(express.json())
 server.use(express.urlencoded({ extended: true }))
+server.use(express.static("static"))
 
 server.api(...apis)
 
