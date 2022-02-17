@@ -24,9 +24,11 @@ export const apiReviewList = new HttpApi({
 		const authPayload = userAuth(req, [AuthRole.USER, AuthRole.LAWYER])
 		const { userId, lawyerId } = await getUserOrLawyerFromAuth(authPayload)
 
+		let isPaymentPaid = authPayload.role === AuthRole.LAWYER ? true : undefined
 		const { limit, pageNo, paperTypeId, status } = body
+
 		const reviews = await listReview({
-			filter: { paperTypeId, status, userId, lawyerId },
+			filter: { paperTypeId, status, userId, lawyerId, isPaymentPaid },
 			pagination: { limit, pageNo },
 			include: {
 				lawyer: authPayload.role !== AuthRole.LAWYER,
