@@ -17,7 +17,7 @@ export async function updateLawyer({
 	}
 }): Promise<Lawyer> {
 	const [lawyer] = await listLawyer({ filter })
-	if (lawyer) throw new UnprocessableEntityError("Lawyer does not exist")
+	if (!lawyer) throw new UnprocessableEntityError("Lawyer does not exist")
 
 	return await prisma.lawyer.update({
 		where: filter,
