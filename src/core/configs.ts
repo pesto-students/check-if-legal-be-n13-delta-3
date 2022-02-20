@@ -24,4 +24,8 @@ export default {
 	encrypt: {
 		secretKey: process.env.ENCRYPT_SECRET_KEY || "encrypt_secret_key",
 	},
+	demo: {
+		userId: process.env.DEMO_USER_ID || "demo_user_id",
+		lawyerId: process.env.DEMO_LAWYER_ID || "demo_lawyer_id",
+	},
 }
