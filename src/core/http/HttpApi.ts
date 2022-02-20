@@ -8,6 +8,7 @@ import { HttpResponse } from "./HttpResponse"
 
 type IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType> = (payload: {
 	req: Request
+	res: Response
 	body: BodySchemaType
 	query: QuerySchemaType
 	params: ParamsSchemaType
@@ -87,6 +88,7 @@ export class HttpApi<
 						body,
 						query,
 						params,
+						res,
 					})
 					sendJsonResponse(res, responseObject)
 				} catch (err) {
@@ -103,6 +105,8 @@ export class HttpApi<
 }
 
 function sendJsonResponse(res: Response, responseObject: HttpResponse | any) {
+	if (res.headersSent) return
+
 	let data = undefined
 	let statusCode = HttpStatusCode.NO_CONTENT
 
