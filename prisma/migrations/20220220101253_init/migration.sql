@@ -1,5 +1,8 @@
 -- CreateEnum
-CREATE TYPE "ReviewStatus" AS ENUM ('INTIAL', 'WAITING_FOR_PAYMENT', 'PENDING_FOR_REVIEW', 'IN_REVIEW', 'CLOSED');
+CREATE TYPE "ReviewStatus" AS ENUM ('INITIAL', 'WAITING_FOR_PAYMENT', 'PENDING_FOR_REVIEW', 'IN_REVIEW', 'CLOSED');
+
+-- CreateEnum
+CREATE TYPE "ReviewPaymentStatus" AS ENUM ('CREATED', 'ATTEMPTED', 'PAID');
 
 -- CreateTable
 CREATE TABLE "Admin" (
@@ -7,7 +10,7 @@ CREATE TABLE "Admin" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "username" VARCHAR(20) NOT NULL,
-    "hashedPassword" VARCHAR(255) NOT NULL,
+    "hashedPassword" TEXT NOT NULL,
 
     CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
 );
@@ -18,10 +21,8 @@ CREATE TABLE "GoogleOAuth" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "googleUserId" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "userId" INTEGER,
-    "lawyerId" INTEGER,
+    "email" TEXT,
+    "userId" INTEGER NOT NULL,
 
     CONSTRAINT "GoogleOAuth_pkey" PRIMARY KEY ("id")
 );
@@ -33,6 +34,7 @@ CREATE TABLE "User" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" VARCHAR(100) NOT NULL,
     "isSuspended" BOOLEAN NOT NULL DEFAULT false,
+    "isLawyer" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -45,13 +47,14 @@ CREATE TABLE "Lawyer" (
     "name" VARCHAR(100) NOT NULL,
     "address" TEXT NOT NULL,
     "description" TEXT,
-    "cityId" INTEGER NOT NULL,
     "phone" VARCHAR(20) NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
-    "verifiedByAdminId" INTEGER,
     "isSuspended" BOOLEAN NOT NULL DEFAULT false,
+    "isAvailable" BOOLEAN NOT NULL DEFAULT true,
     "averageRating" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "ratingPoints" INTEGER NOT NULL DEFAULT 0,
+    "userId" INTEGER NOT NULL,
+    "cityId" INTEGER NOT NULL,
 
     CONSTRAINT "Lawyer_pkey" PRIMARY KEY ("id")
 );
@@ -104,7 +107,7 @@ CREATE TABLE "PaperType" (
 );
 
 -- CreateTable
-CREATE TABLE "Service" (
+CREATE TABLE "Offering" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -113,9 +116,10 @@ CREATE TABLE "Service" (
     "languageId" INTEGER NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
     "expectedTimeInHours" INTEGER NOT NULL,
+    "isAvailable" BOOLEAN NOT NULL DEFAULT true,
     "description" TEXT,
 
-    CONSTRAINT "Service_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Offering_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -127,9 +131,11 @@ CREATE TABLE "Review" (
     "lawyerId" INTEGER NOT NULL,
     "paperTypeId" INTEGER NOT NULL,
     "languageId" INTEGER NOT NULL,
+    "cityId" INTEGER NOT NULL,
     "userNote" TEXT,
     "price" DOUBLE PRECISION NOT NULL,
-    "status" "ReviewStatus" NOT NULL DEFAULT E'INTIAL',
+    "expectedTimeInHours" INTEGER NOT NULL,
+    "status" "ReviewStatus" NOT NULL DEFAULT E'INITIAL',
 
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
@@ -140,11 +146,23 @@ CREATE TABLE "ReviewRating" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "reviewId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
     "rating" INTEGER NOT NULL,
     "comment" TEXT,
 
     CONSTRAINT "ReviewRating_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ReviewPayment" (
+    "id" SERIAL NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "reviewId" INTEGER NOT NULL,
+    "orderId" TEXT NOT NULL,
+    "amountInPaisa" INTEGER NOT NULL,
+    "status" "ReviewPaymentStatus" NOT NULL DEFAULT E'CREATED',
+
+    CONSTRAINT "ReviewPayment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -172,19 +190,19 @@ CREATE UNIQUE INDEX "GoogleOAuth_email_key" ON "GoogleOAuth"("email");
 CREATE UNIQUE INDEX "GoogleOAuth_userId_key" ON "GoogleOAuth"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "GoogleOAuth_lawyerId_key" ON "GoogleOAuth"("lawyerId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Lawyer_name_key" ON "Lawyer"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Lawyer_userId_key" ON "Lawyer"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "State_name_key" ON "State"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "City_name_key" ON "City"("name");
+CREATE UNIQUE INDEX "City_name_stateId_key" ON "City"("name", "stateId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Language_name_key" ON "Language"("name");
@@ -195,17 +213,20 @@ CREATE UNIQUE INDEX "PaperType_name_key" ON "PaperType"("name");
 -- CreateIndex
 CREATE UNIQUE INDEX "ReviewRating_reviewId_key" ON "ReviewRating"("reviewId");
 
--- AddForeignKey
-ALTER TABLE "GoogleOAuth" ADD CONSTRAINT "GoogleOAuth_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "ReviewPayment_reviewId_key" ON "ReviewPayment"("reviewId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ReviewPayment_orderId_key" ON "ReviewPayment"("orderId");
 
 -- AddForeignKey
-ALTER TABLE "GoogleOAuth" ADD CONSTRAINT "GoogleOAuth_lawyerId_fkey" FOREIGN KEY ("lawyerId") REFERENCES "Lawyer"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "GoogleOAuth" ADD CONSTRAINT "GoogleOAuth_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Lawyer" ADD CONSTRAINT "Lawyer_cityId_fkey" FOREIGN KEY ("cityId") REFERENCES "City"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Lawyer" ADD CONSTRAINT "Lawyer_verifiedByAdminId_fkey" FOREIGN KEY ("verifiedByAdminId") REFERENCES "Admin"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Lawyer" ADD CONSTRAINT "Lawyer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "LawyerBank" ADD CONSTRAINT "LawyerBank_lawyerId_fkey" FOREIGN KEY ("lawyerId") REFERENCES "Lawyer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -214,13 +235,13 @@ ALTER TABLE "LawyerBank" ADD CONSTRAINT "LawyerBank_lawyerId_fkey" FOREIGN KEY (
 ALTER TABLE "City" ADD CONSTRAINT "City_stateId_fkey" FOREIGN KEY ("stateId") REFERENCES "State"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Service" ADD CONSTRAINT "Service_lawyerId_fkey" FOREIGN KEY ("lawyerId") REFERENCES "Lawyer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Offering" ADD CONSTRAINT "Offering_lawyerId_fkey" FOREIGN KEY ("lawyerId") REFERENCES "Lawyer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Service" ADD CONSTRAINT "Service_paperTypeId_fkey" FOREIGN KEY ("paperTypeId") REFERENCES "PaperType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Offering" ADD CONSTRAINT "Offering_paperTypeId_fkey" FOREIGN KEY ("paperTypeId") REFERENCES "PaperType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Service" ADD CONSTRAINT "Service_languageId_fkey" FOREIGN KEY ("languageId") REFERENCES "Language"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Offering" ADD CONSTRAINT "Offering_languageId_fkey" FOREIGN KEY ("languageId") REFERENCES "Language"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Review" ADD CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -235,10 +256,13 @@ ALTER TABLE "Review" ADD CONSTRAINT "Review_paperTypeId_fkey" FOREIGN KEY ("pape
 ALTER TABLE "Review" ADD CONSTRAINT "Review_languageId_fkey" FOREIGN KEY ("languageId") REFERENCES "Language"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_cityId_fkey" FOREIGN KEY ("cityId") REFERENCES "City"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "ReviewRating" ADD CONSTRAINT "ReviewRating_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ReviewRating" ADD CONSTRAINT "ReviewRating_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ReviewPayment" ADD CONSTRAINT "ReviewPayment_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ReviewFeedback" ADD CONSTRAINT "ReviewFeedback_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
