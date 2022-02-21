@@ -11,5 +11,6 @@ export async function listReviewFeedback({
 	return await prisma.reviewFeedback.findMany({
 		where: filter,
 		include,
+		orderBy: { createdAt: "asc" },
 	})
 }
