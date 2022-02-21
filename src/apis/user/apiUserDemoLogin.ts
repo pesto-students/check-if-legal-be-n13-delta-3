@@ -12,8 +12,10 @@ export const apiUserDemoLogin = new HttpApi({
 	bodySchema: z.object({ isLawyer: z.boolean().optional() }).strict(),
 	handler: async ({ body: { isLawyer } }) => {
 		const googleUserId = isLawyer ? configs.demo.lawyerId : configs.demo.userId
-		const email = "demo@email.com"
-		const name = "Demo User"
+		const email = isLawyer
+			? "demo_lawyer@checkiflegal.com"
+			: "demo_user@checkiflegal.com"
+		const name = isLawyer ? "Demo User" : "Demo Lawyer"
 
 		const user = await getOrCreateUserWithGoogleOAuth({
 			googleUserId,
