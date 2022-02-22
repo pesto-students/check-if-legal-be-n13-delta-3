@@ -1,5 +1,5 @@
 import { apiLawyerProofList } from "./apiLawyerProofList"
-import { apiLawyerSelfPictureUpload } from "./apiLawyerSelfPictureUpload copy"
+import { apiLawyerSelfPictureUpload } from "./apiLawyerSelfPictureUpload"
 import { apiLawyerSelfProofDelete } from "./apiLawyerSelfProofDelete"
 import { apiLawyerSelfProofList } from "./apiLawyerSelfProofList"
 import { apiLawyerSelfProofUpload } from "./apiLawyerSelfProofUpload"
