@@ -1,5 +1,5 @@
-import { apiLawyerBankCreate } from "./apiLawyerBankCreate"
+import { apiLawyerBankUpsert } from "./apiLawyerBankUpsert"
 import { apiLawyerBankDelete } from "./apiLawyerBankDelete"
-import { apiLawyerBankList } from "./apiLawyerBankList"
+import { apiLawyerBankGet } from "./apiLawyerBankGet"
 
-export default [apiLawyerBankCreate, apiLawyerBankList, apiLawyerBankDelete]
+export default [apiLawyerBankUpsert, apiLawyerBankGet, apiLawyerBankDelete]
