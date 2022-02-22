@@ -1,5 +1,5 @@
 export const getPapers = {
-    tags: ["Paper"],
+	tags: ["Paper"],
 	description: "ListPaperTypes",
 	operationId: "getPapers",
 	security: [

@@ -1,4 +1,4 @@
-export const updatePaperType= {
+export const updatePaperType = {
 	tags: ["Paper"],
 	description: "Can Update the Paper Type",
 	operationId: "updatePaperType",

@@ -1,4 +1,3 @@
-
 export const UpdateLawyer = {
 	tags: ["Lawyer"],
 	description: "Update Lawyer But Need Verified Lawyer",
