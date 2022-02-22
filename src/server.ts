@@ -5,7 +5,6 @@ import path from "path"
 import apis from "./apis"
 import configs from "./core/configs"
 import { HttpServer } from "./core/http/HttpServer"
-
 const server = new HttpServer(configs.server.port)
 
 server.use(cors())

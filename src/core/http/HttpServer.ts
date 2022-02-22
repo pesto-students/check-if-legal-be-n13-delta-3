@@ -1,5 +1,7 @@
 import express, { Express, RequestHandler } from "express"
 import { HttpApi } from "./HttpApi"
+import swaggerUi from "swagger-ui-express"
+import { swaggerDocument } from "../../swagger"
 
 export class HttpServer {
 	server: Express
@@ -8,6 +10,7 @@ export class HttpServer {
 	constructor(port: number) {
 		this.server = express()
 		this.port = port
+		this.server.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 	}
 
 	listen(): Promise<number> {
