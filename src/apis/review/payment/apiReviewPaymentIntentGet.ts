@@ -36,6 +36,12 @@ export const apiReviewPaymentIntentGet = new HttpApi({
 			throw new ConflictError("Review payment is already paid")
 		}
 
-		return { orderId: reviewPayment.orderId, idKey: configs.razorpay.idKey }
+		return {
+			orderId: reviewPayment.orderId,
+			amount: reviewPayment.amountInPaisa,
+			currency: "INR",
+			idKey: configs.razorpay.idKey,
+			name: "Check If Legal",
+		}
 	},
 })

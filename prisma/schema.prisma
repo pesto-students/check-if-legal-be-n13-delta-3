@@ -29,7 +29,7 @@ model User {
     id          Int          @id @default(autoincrement())
     createdAt   DateTime     @default(now())
     updatedAt   DateTime     @updatedAt
-    name        String       @unique @db.VarChar(100)
+    name        String       @db.VarChar(100)
     isSuspended Boolean      @default(false)
     isLawyer    Boolean      @default(false)
     googleOAuth GoogleOAuth?
@@ -38,32 +38,32 @@ model User {
 }
 
 model Lawyer {
-    id            Int          @id @default(autoincrement())
-    createdAt     DateTime     @default(now())
-    updatedAt     DateTime     @updatedAt
-    name          String       @unique @db.VarChar(100)
+    id            Int         @id @default(autoincrement())
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+    name          String      @db.VarChar(100)
     address       String
     description   String?
-    phone         String       @db.VarChar(20)
-    isVerified    Boolean      @default(false)
-    isSuspended   Boolean      @default(false)
-    isAvailable   Boolean      @default(true)
-    averageRating Float        @default(0)
-    ratingPoints  Int          @default(0)
-    userId        Int          @unique
+    phone         String      @db.VarChar(20)
+    isVerified    Boolean     @default(false)
+    isSuspended   Boolean     @default(false)
+    isAvailable   Boolean     @default(true)
+    averageRating Float       @default(0)
+    ratingPoints  Int         @default(0)
+    userId        Int         @unique
     cityId        Int
-    city          City         @relation(fields: [cityId], references: [id])
-    user          User         @relation(fields: [userId], references: [id])
+    city          City        @relation(fields: [cityId], references: [id])
+    user          User        @relation(fields: [userId], references: [id])
     offerings     Offering[]
     reviews       Review[]
-    banks         LawyerBank[]
+    bank          LawyerBank?
 }
 
 model LawyerBank {
     id            Int      @id @default(autoincrement())
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
-    lawyerId      Int
+    lawyerId      Int      @unique
     lawyer        Lawyer   @relation(fields: [lawyerId], references: [id])
     bankName      String   @db.VarChar(100)
     bankIfsc      String   @db.VarChar(11)
@@ -139,6 +139,7 @@ model Review {
     feedbacks           ReviewFeedback[]
     rating              ReviewRating?
     payment             ReviewPayment?
+    payout              ReviewPayout?
 }
 
 model ReviewRating {
@@ -160,6 +161,16 @@ model ReviewPayment {
     orderId       String              @unique
     amountInPaisa Int
     status        ReviewPaymentStatus @default(CREATED)
+}
+
+model ReviewPayout {
+    id            Int      @id @default(autoincrement())
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    reviewId      Int      @unique
+    review        Review   @relation(fields: [reviewId], references: [id])
+    amountInPaisa Int
+    isApproved    Boolean  @default(false)
 }
 
 model ReviewFeedback {

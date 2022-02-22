@@ -1,5 +1,5 @@
 import { randAccount, randBrand } from "@ngneat/falso"
-import { createLawyerBank } from "../../services/lawyerBank/createLawyerBank"
+import { upsertLawyerBank } from "../../services/lawyerBank/upsertLawyerBank"
 import { randomBankIfsc } from "./bank"
 import { generateLawyer } from "./lawyer"
 
@@ -13,5 +13,5 @@ export async function generateLawyerBank({
 	const bankIfsc = randomBankIfsc()
 	const accountNumber = randAccount()
 
-	return await createLawyerBank({ lawyerId, bankIfsc, bankName, accountNumber })
+	return await upsertLawyerBank({ lawyerId }, { bankIfsc, bankName, accountNumber })
 }

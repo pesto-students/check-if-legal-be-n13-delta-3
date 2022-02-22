@@ -10,9 +10,11 @@ export const apiReviewNoteUpdate = new HttpApi({
 	method: HttpMethod.PATCH,
 	endpoint: "/review/:id",
 	bodySchema,
-	paramsSchema: z.object({ id: z.number().int() }).strict(),
-	handler: async ({ req, body, params: { id } }) => {
+	paramsSchema: z.object({ id: z.string() }).strict(),
+	handler: async ({ req, body, params }) => {
 		const { id: userId } = userAuth(req, [AuthRole.USER])
+		const id = +params.id
+
 		await updateReview({ filter: { id, userId }, update: body })
 	},
 })

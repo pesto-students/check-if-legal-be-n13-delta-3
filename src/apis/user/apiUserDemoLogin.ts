@@ -1,21 +1,21 @@
 import { z } from "zod"
+import configs from "../../core/configs"
 import { AuthRole } from "../../core/enums"
 import { HttpApi, HttpMethod } from "../../core/http"
 import { createAuthToken } from "../../helpers/auth/authToken"
-import { verifyGoogleOAuthIdToken } from "../../helpers/googleOAuth/verifyGoogleOAuthIdToken"
 import { listLawyer } from "../../services/lawyer/listLawyer"
 import { getOrCreateUserWithGoogleOAuth } from "../../services/user/getOrCreateUserWithGoogleOAuth"
 
-const bodySchema = z
-	.object({ idToken: z.string(), isLawyer: z.boolean().optional() })
-	.strict()
-
-export const apiUserGoogleAuthLogin = new HttpApi({
+export const apiUserDemoLogin = new HttpApi({
 	method: HttpMethod.POST,
-	endpoint: "/user/googleAuth",
-	bodySchema,
-	handler: async ({ body: { idToken, isLawyer } }) => {
-		const { email, googleUserId, name } = await verifyGoogleOAuthIdToken(idToken)
+	endpoint: "/user/demo/login",
+	bodySchema: z.object({ isLawyer: z.boolean().optional() }).strict(),
+	handler: async ({ body: { isLawyer } }) => {
+		const googleUserId = isLawyer ? configs.demo.lawyerId : configs.demo.userId
+		const email = isLawyer
+			? "demo_lawyer@checkiflegal.com"
+			: "demo_user@checkiflegal.com"
+		const name = isLawyer ? "Demo User" : "Demo Lawyer"
 
 		const user = await getOrCreateUserWithGoogleOAuth({
 			googleUserId,

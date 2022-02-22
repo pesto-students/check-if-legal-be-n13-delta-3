@@ -1,8 +1,17 @@
-import { Review, ReviewStatus } from "@prisma/client"
+import { Review, ReviewPaymentStatus, ReviewStatus } from "@prisma/client"
 import { prisma } from "../../core/prisma"
 
 export async function listReview({
-	filter: { id, userId, cityId, lawyerId, languageId, paperTypeId, status } = {},
+	filter: {
+		id,
+		userId,
+		cityId,
+		lawyerId,
+		languageId,
+		paperTypeId,
+		status,
+		isPaymentPaid,
+	} = {},
 	pagination: { limit = 10, pageNo = 1 } = {},
 	include,
 }: {
@@ -14,6 +23,7 @@ export async function listReview({
 		languageId?: number
 		cityId?: number
 		status?: ReviewStatus
+		isPaymentPaid?: boolean
 	}
 	pagination?: { limit?: number; pageNo?: number }
 	include?: {
@@ -35,6 +45,7 @@ export async function listReview({
 			...(paperTypeId && { paperTypeId }),
 			...(languageId && { languageId }),
 			...(status && { status }),
+			...(isPaymentPaid && { payment: { status: ReviewPaymentStatus.PAID } }),
 		},
 		include,
 		orderBy: { createdAt: "desc" },

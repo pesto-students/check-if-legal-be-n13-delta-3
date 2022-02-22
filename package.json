@@ -9,10 +9,11 @@
 	"scripts": {
 		"test": "mocha",
 		"coverage": "nyc mocha",
-		"dev": "nodemon src/index.ts",
+		"dev": "npm run seed && nodemon src/index.ts",
 		"clean": "rimraf dist/",
 		"build": "tsc -p tsconfig.build.json",
 		"start": "node dist/index.js",
+		"seed": "ts-node seeds/index.ts",
 		"prisma:init": "prisma init",
 		"prisma:migrate": "prisma migrate dev --preview-feature",
 		"prisma:generate": "prisma generate"

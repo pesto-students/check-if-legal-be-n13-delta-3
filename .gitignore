@@ -108,3 +108,4 @@ temp/
 
 # Storage directory for storing all the files
 storage/
+static/

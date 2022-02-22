@@ -3,7 +3,7 @@ import { expect } from "chai"
 import { AuthRole } from "../../../core/enums"
 import { HttpMethod, HttpStatusCode } from "../../../core/http"
 import { createAuthToken } from "../../../helpers/auth/authToken"
-import { listLawyerBank } from "../../../services/lawyerBank/listLawyerBank"
+import { listReviewFeedback } from "../../../services/reviewFeedback/listReviewFeedback"
 import { httpApiRequest } from "../../../test/httpApiRequest"
 import { generateLawyer } from "../../../test/resources/lawyer"
 import { generateReview } from "../../../test/resources/review"
@@ -56,7 +56,7 @@ describe(`API: ${method} ${getEndpoint(":reviewId", ":feedbackId")}`, () => {
 			})
 			expect(res).empty
 
-			const [lawyerFeedback] = await listLawyerBank({
+			const [lawyerFeedback] = await listReviewFeedback({
 				filter: { id: selectedReviewFeedback.id },
 			})
 			expect(lawyerFeedback).not.exist

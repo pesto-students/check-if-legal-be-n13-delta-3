@@ -8,6 +8,7 @@ import { HttpResponse } from "./HttpResponse"
 
 type IHandler<BodySchemaType, QuerySchemaType, ParamsSchemaType> = (payload: {
 	req: Request
+	res: Response
 	body: BodySchemaType
 	query: QuerySchemaType
 	params: ParamsSchemaType
@@ -38,7 +39,7 @@ export class HttpApi<
 > {
 	method: HttpMethod
 	endpoint: string
-	bodySchema: z.Schema<BodySchemaType>
+	bodySchema?: z.Schema<BodySchemaType>
 	querySchema: z.Schema<QuerySchemaType>
 	paramsSchema: z.Schema<ParamsSchemaType>
 	options: IOptions
@@ -57,7 +58,7 @@ export class HttpApi<
 		this.method = payload.method
 		this.endpoint = payload.endpoint
 		// @ts-ignore
-		this.bodySchema = payload.bodySchema ?? z.object({}).strict()
+		this.bodySchema = payload.bodySchema
 		// @ts-ignore
 		this.querySchema = payload.querySchema ?? z.object({}).strict()
 		// @ts-ignore
@@ -76,16 +77,18 @@ export class HttpApi<
 				if (res.headersSent) return
 
 				try {
-					const [body, query, params] = await Promise.all([
-						this.bodySchema.parseAsync(req.body),
-						this.querySchema.parseAsync(req.query),
-						this.paramsSchema.parseAsync(req.params),
-					])
+					const body = this.bodySchema
+						? await this.bodySchema.parseAsync(req.body)
+						: ({} as BodySchemaType)
+					const query = await this.querySchema.parseAsync(req.query)
+					const params = await this.paramsSchema.parseAsync(req.params)
+
 					const responseObject = await this.handler({
 						req,
 						body,
 						query,
 						params,
+						res,
 					})
 					sendJsonResponse(res, responseObject)
 				} catch (err) {
@@ -102,6 +105,8 @@ export class HttpApi<
 }
 
 function sendJsonResponse(res: Response, responseObject: HttpResponse | any) {
+	if (res.headersSent) return
+
 	let data = undefined
 	let statusCode = HttpStatusCode.NO_CONTENT
 

@@ -112,7 +112,10 @@ describe(`API: ${endpoint}`, () => {
 				}
 
 				for (const review of res) {
-					expectReviewSchema(review)
+					expectReviewSchema(review, {
+						user: role !== AuthRole.USER,
+						lawyer: role !== AuthRole.LAWYER,
+					})
 				}
 
 				expect(res.length).equal(expectedReviewListCount)

@@ -28,8 +28,8 @@ export const apiReviewClose = new HttpApi({
 		if (review.status === ReviewStatus.CLOSED) {
 			throw new ConflictError("Review already closed")
 		}
-		if (review.status !== ReviewStatus.IN_REVIEW) {
-			throw new ConflictError("Only in-review are allowed to close")
+		if (review.status !== ReviewStatus.PENDING_FOR_REVIEW) {
+			throw new ConflictError("Only pending reviews are allowed to close")
 		}
 
 		const id = +params.id

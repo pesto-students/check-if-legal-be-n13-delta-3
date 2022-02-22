@@ -38,7 +38,7 @@ describe(`API: ${endpoint}`, () => {
 			method,
 			endpoint,
 			auth,
-			body: { paperTypeId, cityId, languageId },
+			query: { paperTypeId, cityId, languageId },
 		})
 		expect(res).exist
 	})
