@@ -1,7 +1,7 @@
 import { randJobDescriptor, randNumber } from "@ngneat/falso"
 import { ReviewStatus } from "@prisma/client"
 import { updateReview } from "../../services/review/updateReview"
-import { createReviewRating } from "../../services/reviewRating/createReviewRating"
+import { upsertReviewRating } from "../../services/reviewRating/upsertReviewRating"
 import { generateReview } from "./review"
 
 export async function generateReviewRating({
@@ -20,5 +20,5 @@ export async function generateReviewRating({
 	const rating = randNumber({ min: 1, max: 5 })
 	const comment = randJobDescriptor()
 
-	return await createReviewRating({ reviewId, rating, comment })
+	return await upsertReviewRating({ reviewId, rating, comment })
 }

@@ -10,10 +10,11 @@ import { listReviewRating } from "../../../services/reviewRating/listReviewRatin
 import { httpApiRequest } from "../../../test/httpApiRequest"
 import { generateLawyer } from "../../../test/resources/lawyer"
 import { generateReview } from "../../../test/resources/review"
+import { generateReviewRating } from "../../../test/resources/reviewRating"
 import { generateUser } from "../../../test/resources/user"
 import { truncateDatabase } from "../../../test/truncateDatabase"
 
-const method = HttpMethod.POST
+const method = HttpMethod.PUT
 function getEndpoint(reviewId: number | string) {
 	return `/review/${reviewId}/rating`
 }
@@ -56,37 +57,6 @@ describe(`API: ${method} ${getEndpoint(":reviewId")}`, () => {
 	})
 
 	/**
-	 * Success cases
-	 */
-	it(`Success: when review status is CLOSED`, async () => {
-		const { id: reviewId } = await generateReview({ userId: user.id })
-		await updateReview({
-			filter: { id: reviewId },
-			update: { status: ReviewStatus.CLOSED },
-		})
-
-		const rating = randNumber({ min: 1, max: 5 })
-		const comment = randProductDescription()
-
-		const res = await httpApiRequest({
-			method,
-			endpoint: getEndpoint(reviewId),
-			auth,
-			body: { rating, comment },
-			expectedStatusCode: HttpStatusCode.CREATED,
-		})
-		expect(res).exist
-		expect(res.id).exist
-
-		const [reviewRating] = await listReviewRating({ filter: { reviewId } })
-		expect(reviewRating).exist
-		expect(reviewRating.id).equal(res.id)
-		expect(reviewRating.reviewId).equal(reviewId)
-		expect(reviewRating.rating).equal(rating)
-		expect(reviewRating.comment).equal(comment)
-	})
-
-	/**
 	 * Fail cases
 	 */
 	const reviewStatuses = _.values(ReviewStatus).filter((s) => s !== ReviewStatus.CLOSED)
@@ -107,4 +77,58 @@ describe(`API: ${method} ${getEndpoint(":reviewId")}`, () => {
 			})
 		})
 	}
+
+	/**
+	 * Success cases
+	 */
+	it(`Success: when review status is CLOSED`, async () => {
+		const { id: reviewId } = await generateReview({ userId: user.id })
+		await updateReview({
+			filter: { id: reviewId },
+			update: { status: ReviewStatus.CLOSED },
+		})
+
+		const rating = randNumber({ min: 1, max: 5 })
+		const comment = randProductDescription()
+
+		const res = await httpApiRequest({
+			method,
+			endpoint: getEndpoint(reviewId),
+			auth,
+			body: { rating, comment },
+			expectedStatusCode: HttpStatusCode.NO_CONTENT,
+		})
+		expect(res).empty
+
+		const [reviewRating] = await listReviewRating({ filter: { reviewId } })
+		expect(reviewRating).exist
+		expect(reviewRating.reviewId).equal(reviewId)
+		expect(reviewRating.rating).equal(rating)
+		expect(reviewRating.comment).equal(comment)
+	})
+
+	/**
+	 * Success cases
+	 */
+	it(`Success: updating review rating`, async () => {
+		const { reviewId } = await generateReviewRating({ userId: user.id })
+
+		const rating = randNumber({ min: 1, max: 5 })
+		const comment = randProductDescription()
+
+		const res = await httpApiRequest({
+			method,
+			endpoint: getEndpoint(reviewId),
+			auth,
+			body: { rating, comment },
+			expectedStatusCode: HttpStatusCode.NO_CONTENT,
+		})
+		expect(res).empty
+
+		const [reviewRating] = await listReviewRating({ filter: { reviewId } })
+		expect(reviewRating).exist
+		expect(reviewRating.reviewId).equal(reviewId)
+		expect(reviewRating.rating).equal(rating)
+		expect(reviewRating.comment).equal(comment)
+	})
 })

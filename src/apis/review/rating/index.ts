@@ -1,4 +1,4 @@
-import { apiReviewRatingCreate } from "./apiReviewRatingCreate"
+import { apiReviewRatingUpsert } from "./apiReviewRatingUpsert"
 import { apiReviewRatingGet } from "./apiReviewRatingGet"
 
-export default [apiReviewRatingCreate, apiReviewRatingGet]
+export default [apiReviewRatingUpsert, apiReviewRatingGet]

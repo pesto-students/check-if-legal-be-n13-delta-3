@@ -2,8 +2,9 @@ import { ReviewRating, ReviewStatus } from "@prisma/client"
 import { UnprocessableEntityError } from "../../core/http"
 import { prisma } from "../../core/prisma"
 import { validateRating } from "../../helpers/validators"
+import { listReviewRating } from "./listReviewRating"
 
-export async function createReviewRating({
+export async function upsertReviewRating({
 	reviewId,
 	comment,
 	rating,
@@ -20,6 +21,14 @@ export async function createReviewRating({
 	const isReviewClosed = review.status === ReviewStatus.CLOSED
 	if (!isReviewClosed) {
 		throw new UnprocessableEntityError("Ratings are only allowed in closed reviews")
+	}
+
+	const [reviewRating] = await listReviewRating({ filter: { reviewId } })
+	if (reviewRating) {
+		return await prisma.reviewRating.update({
+			where: { reviewId },
+			data: { rating, comment },
+		})
 	}
 
 	return await prisma.reviewRating.create({ data: { reviewId, rating, comment } })
