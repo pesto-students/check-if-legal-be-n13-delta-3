@@ -7,6 +7,7 @@ import { apiReviewNoteUpdate } from "./apiReviewNoteUpdate"
 import reviewDocumentApis from "./document"
 import reviewFeedbackApis from "./feedback"
 import reviewPaymentApis from "./payment"
+import reviewRatingApis from "./rating"
 
 export default [
 	apiReviewCreate,
@@ -18,4 +19,5 @@ export default [
 	...reviewFeedbackApis,
 	...reviewPaymentApis,
 	...reviewDocumentApis,
+	...reviewRatingApis,
 ]
