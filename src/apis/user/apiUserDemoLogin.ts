@@ -15,7 +15,7 @@ export const apiUserDemoLogin = new HttpApi({
 		const email = isLawyer
 			? "demo_lawyer@checkiflegal.com"
 			: "demo_user@checkiflegal.com"
-		const name = isLawyer ? "Demo User" : "Demo Lawyer"
+		const name = isLawyer ? "Demo Lawyer" : "Demo User"
 
 		const user = await getOrCreateUserWithGoogleOAuth({
 			googleUserId,
