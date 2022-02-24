@@ -83,7 +83,7 @@ describe(`API: ${endpoint}`, () => {
 					method,
 					endpoint,
 					auth,
-					body: {
+					query: {
 						...(filter.withPaperTypeId && { paperTypeId: paperType.id }),
 						...(filter.withPaperTypeId && { paperTypeId: paperType.id }),
 					},
