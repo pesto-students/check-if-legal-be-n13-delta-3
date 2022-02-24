@@ -11,6 +11,8 @@ const querySchema = z
 		cityId: z.string(),
 		languageId: z.string(),
 		maxPrice: z.string().optional(),
+		pageNo: z.string().optional(),
+		limit: z.string().optional(),
 	})
 	.strict()
 
@@ -22,17 +24,23 @@ export const apiUserOfferingList = new HttpApi({
 		const authPayload = userPublicAuth(req, [AuthRole.USER])
 		const isGuestUser = !authPayload
 
-		const { cityId, languageId, paperTypeId, maxPrice } = query
+		const cityId = +query.cityId
+		const languageId = +query.languageId
+		const paperTypeId = +query.paperTypeId
+		const maxPrice = query.maxPrice ? +query.maxPrice : undefined
+		const pageNo = query.pageNo ? +query.pageNo : undefined
+		const limit = query.limit ? +query.limit : undefined
 
 		const offerings = await listOffering({
 			filter: {
-				cityId: +cityId,
-				languageId: +languageId,
-				paperTypeId: +paperTypeId,
-				maxPrice: maxPrice ? +maxPrice : undefined,
+				cityId,
+				languageId,
+				paperTypeId,
+				maxPrice,
 				isAvailable: true,
 				isLawyerAvailable: true,
 			},
+			pagination: { pageNo, limit },
 			include: { lawyer: true },
 		})
 		return offerings.map((el) => sanitizeOffering(el, isGuestUser))
