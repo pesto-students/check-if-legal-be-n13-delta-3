@@ -1,6 +1,6 @@
 <!-- PROJECT LOGO -->
 <p align="center">
-    <img src="./public/assets/logo-light.png" alt="Logo"  >
+    <img src="https://checkiflegal.in/assets/logo-light.png" alt="Logo"  >
 </p>
 Check if Legal is a online legal paper verification platform, where you are allowed to select from expert and verified lawyers based on your city.
 <br />
