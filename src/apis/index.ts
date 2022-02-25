@@ -8,6 +8,7 @@ import paymentApis from "./payment"
 import reviewApis from "./review"
 import stateApis from "./state"
 import userApis from "./user"
+import ratingApis from "./rating"
 
 export default [
 	...adminApis,
@@ -20,4 +21,5 @@ export default [
 	...languageApis,
 	...paperTypeApis,
 	...paymentApis,
+	...ratingApis,
 ]
