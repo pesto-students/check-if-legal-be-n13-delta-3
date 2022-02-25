@@ -1,8 +1,8 @@
 import { z } from "zod"
-import { AuthRole } from "../../../core/enums"
-import { HttpApi, HttpMethod } from "../../../core/http"
-import { userAuth } from "../../../helpers/auth/userAuth"
-import { listReviewPayment } from "../../../services/reviewPayment/listReviewPayment"
+import { AuthRole } from "../../core/enums"
+import { HttpApi, HttpMethod } from "../../core/http"
+import { userAuth } from "../../helpers/auth/userAuth"
+import { listReviewPayment } from "../../services/reviewPayment/listReviewPayment"
 
 const querySchema = z
 	.object({
