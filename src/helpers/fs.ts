@@ -35,7 +35,7 @@ export async function deleteAllDirFiles(dir: PathLike) {
 }
 
 export async function deleteFile(path: PathLike) {
-	if (!existsSync(path)) return
+	if (!existsSync(path)) throw new Error("File not found")
 	await fs.unlink(path)
 }
 
