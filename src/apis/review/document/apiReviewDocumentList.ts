@@ -1,4 +1,5 @@
 import { z } from "zod"
+import * as Sentry from "@sentry/node"
 import { AuthRole } from "../../../core/enums"
 import { HttpApi, HttpMethod, UnprocessableEntityError } from "../../../core/http"
 import { userAuth } from "../../../helpers/auth/userAuth"
@@ -20,7 +21,12 @@ export const apiReviewDocumentList = new HttpApi({
 		if (!review) throw new UnprocessableEntityError("Review not found")
 
 		const dirPath = getReviewDocsDirPath(review.id)
-		await createDirIfNotExists(dirPath)
-		return await getDirFiles(dirPath)
+		try {
+			await createDirIfNotExists(dirPath)
+			return await getDirFiles(dirPath)
+		} catch (error) {
+			Sentry.captureException(error)
+			return []
+		}
 	},
 })

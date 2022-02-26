@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node"
 import { AuthRole } from "../../../core/enums"
 import {
 	ForbiddenError,
@@ -25,7 +26,12 @@ export const apiLawyerSelfProofList = new HttpApi({
 		}
 
 		const dirPath = getLawyerProofDirPath(lawyer.id)
-		await createDirIfNotExists(dirPath)
-		return await getDirFiles(dirPath)
+		try {
+			await createDirIfNotExists(dirPath)
+			return await getDirFiles(dirPath)
+		} catch (error) {
+			Sentry.captureException(error)
+			return []
+		}
 	},
 })
