@@ -8,7 +8,7 @@ import {
 } from "../../../core/http"
 import { userAuth } from "../../../helpers/auth/userAuth"
 import { getLawyerProofDirPath } from "../../../helpers/directoryPaths"
-import { getDirFiles } from "../../../helpers/fs"
+import { createDirIfNotExists, getDirFiles } from "../../../helpers/fs"
 import { listLawyer } from "../../../services/lawyer/listLawyer"
 import { getUserOrLawyerFromAuth } from "../../../services/user/getUserOrLawyerFromAuth"
 
@@ -25,15 +25,8 @@ export const apiLawyerSelfProofList = new HttpApi({
 			throw new ForbiddenError("Verified lawyer is not allowed to upload proofs")
 		}
 
-		let fileNames: string[] = []
-		try {
-			const dirPath = getLawyerProofDirPath(lawyer.id)
-			fileNames = await getDirFiles(dirPath)
-		} catch (err) {
-			Sentry.captureException(err);
-			return []
-		}
-
-		return fileNames
+		const dirPath = getLawyerProofDirPath(lawyer.id)
+		await createDirIfNotExists(dirPath)
+		return await getDirFiles(dirPath)
 	},
 })

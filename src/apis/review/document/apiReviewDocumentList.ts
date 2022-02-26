@@ -4,7 +4,7 @@ import { AuthRole } from "../../../core/enums"
 import { HttpApi, HttpMethod, UnprocessableEntityError } from "../../../core/http"
 import { userAuth } from "../../../helpers/auth/userAuth"
 import { getReviewDocsDirPath } from "../../../helpers/directoryPaths"
-import { getDirFiles } from "../../../helpers/fs"
+import { createDirIfNotExists, getDirFiles } from "../../../helpers/fs"
 import { listReview } from "../../../services/review/listReview"
 import { getUserOrLawyerFromAuth } from "../../../services/user/getUserOrLawyerFromAuth"
 
@@ -20,15 +20,8 @@ export const apiReviewDocumentList = new HttpApi({
 		const [review] = await listReview({ filter: { id: reviewId, userId, lawyerId } })
 		if (!review) throw new UnprocessableEntityError("Review not found")
 
-		let fileNames: string[] = []
-		try {
-			const dirPath = getReviewDocsDirPath(review.id)
-			fileNames = await getDirFiles(dirPath)
-		} catch (err) {
-			Sentry.captureException(err);
-			return []
-		}
-
-		return fileNames
+		const dirPath = getReviewDocsDirPath(review.id)
+		await createDirIfNotExists(dirPath)
+		return await getDirFiles(dirPath)
 	},
 })
