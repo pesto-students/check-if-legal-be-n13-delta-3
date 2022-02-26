@@ -1,8 +1,7 @@
-import { existsSync, PathLike } from "fs"
-import fs from "fs/promises"
+import fs, { PathLike } from "fs"
 import path from "path"
 
-export async function copyFile({
+export function copyFile({
 	src,
 	dest,
 	fileName,
@@ -10,44 +9,109 @@ export async function copyFile({
 	src: PathLike
 	dest: PathLike
 	fileName: string
-}) {
-	await createDirIfNotExists(dest)
-	await fs.copyFile(src, path.join(dest.toString(), fileName))
+}): Promise<void> {
+	return new Promise((resolve, reject) => {
+		createDirIfNotExists(dest)
+			.then(() => {
+				const destFilePath = path.join(dest.toString(), fileName)
+				fs.copyFile(src, destFilePath, (err) => {
+					if (err) reject(err)
+					else resolve(undefined)
+				})
+			})
+			.catch(reject)
+	})
 }
 
-export async function createDirIfNotExists(dir: PathLike) {
-	if (!existsSync(dir)) {
-		await fs.mkdir(dir, { recursive: true })
-	}
+export function createDirIfNotExists(dir: PathLike): Promise<void> {
+	return new Promise((resolve, reject) => {
+		if (fs.existsSync(dir)) {
+			resolve(undefined)
+		} else {
+			fs.mkdir(dir, { recursive: true }, (err) => {
+				if (err) reject(err)
+				else resolve(undefined)
+			})
+		}
+	})
 }
 
-export async function getDirFiles(dir: PathLike) {
-	return await fs.readdir(dir)
+export function getDirFiles(dir: PathLike): Promise<string[]> {
+	return new Promise((resolve, reject) => {
+		fs.readdir(dir, (err, files) => {
+			if (err) reject(err)
+			else resolve(files)
+		})
+	})
 }
 
-export async function deleteAllDirFiles(dir: PathLike) {
-	if (!existsSync(dir)) return
-
-	const files = await getDirFiles(dir)
-	for (const file of files) {
-		await fs.unlink(path.join(dir.toString(), file))
-	}
+export function deleteAllDirFiles(dir: PathLike): Promise<void> {
+	return new Promise((resolve, reject) => {
+		if (!fs.existsSync(dir)) {
+			resolve(undefined)
+		} else {
+			getDirFiles(dir)
+				.then((files) => {
+					for (const file of files) {
+						const filePath = path.join(dir.toString(), file)
+						fs.unlinkSync(filePath)
+					}
+					resolve(undefined)
+				})
+				.catch(reject)
+		}
+	})
 }
 
-export async function deleteFile(path: PathLike) {
-	if (!existsSync(path)) throw new Error("File not found")
-	await fs.unlink(path)
+export function deleteFile(path: PathLike): Promise<void> {
+	return new Promise((resolve, reject) => {
+		if (!fs.existsSync(path)) {
+			reject(new Error("File not found"))
+		} else {
+			fs.unlink(path, (err) => {
+				if (err) reject(err)
+				else resolve(undefined)
+			})
+		}
+	})
 }
 
-export async function deleteDir(dir: PathLike) {
-	if (!existsSync(dir)) return
-	await deleteAllDirFiles(dir)
-	await fs.rmdir(dir)
+export function deleteDir(dir: PathLike): Promise<void> {
+	return new Promise((resolve, reject) => {
+		if (!fs.existsSync(dir)) {
+			resolve(undefined)
+		} else {
+			deleteAllDirFiles(dir)
+				.then(() =>
+					fs.rmdir(dir, (err) => {
+						if (err) reject(err)
+						else resolve(undefined)
+					}),
+				)
+				.catch(reject)
+		}
+	})
 }
 
-export async function saveFile(dir: PathLike, data: Buffer, fileName: string) {
-	await createDirIfNotExists(dir)
+export function saveFile(dir: PathLike, data: Buffer, fileName: string): Promise<void> {
+	return new Promise((resolve, reject) => {
+		createDirIfNotExists(dir)
+			.then(() => {
+				const filePath = path.join(dir.toString(), fileName)
+				fs.writeFile(filePath, data, (err) => {
+					if (err) reject(err)
+					else resolve(undefined)
+				})
+			})
+			.catch(reject)
+	})
+}
 
-	const fullPath = path.join(dir.toString(), fileName)
-	await fs.writeFile(fullPath, data)
+export function getFileData(filePath: PathLike): Promise<Buffer> {
+	return new Promise((resolve, reject) => {
+		fs.readFile(filePath, (err, data) => {
+			if (err) reject(err)
+			else resolve(data)
+		})
+	})
 }

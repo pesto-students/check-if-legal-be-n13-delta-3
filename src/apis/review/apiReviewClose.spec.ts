@@ -32,7 +32,7 @@ describe(`API: ${method} ${getEndpoint(":reviewId")}`, () => {
 		const { id: reviewId } = await generateReview({ lawyerId: lawyer.id })
 		await updateReview({
 			filter: { id: reviewId },
-			update: { status: ReviewStatus.IN_REVIEW },
+			update: { status: ReviewStatus.PENDING_FOR_REVIEW },
 		})
 
 		const res = await httpApiRequest({

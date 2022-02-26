@@ -9,5 +9,6 @@ export function expectReviewRatingSchema(data: any) {
 		"comment",
 		"rating",
 		"reviewId",
+		"review",
 	)
 }
