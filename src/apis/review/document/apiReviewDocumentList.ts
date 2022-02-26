@@ -15,6 +15,7 @@ export const apiReviewDocumentList = new HttpApi({
 	handler: async ({ req, params }) => {
 		const authPayload = userAuth(req, [AuthRole.USER, AuthRole.LAWYER])
 		const { userId, lawyerId } = await getUserOrLawyerFromAuth(authPayload)
+		let fileNames: any[] = []
 
 		const reviewId = +params.reviewId
 		const [review] = await listReview({ filter: { id: reviewId, userId, lawyerId } })
@@ -23,10 +24,11 @@ export const apiReviewDocumentList = new HttpApi({
 		const dirPath = getReviewDocsDirPath(review.id)
 		try {
 			await createDirIfNotExists(dirPath)
-			return await getDirFiles(dirPath)
+			fileNames = await getDirFiles(dirPath)
 		} catch (error) {
 			Sentry.captureException(error)
 			return []
 		}
+		return fileNames
 	},
 })

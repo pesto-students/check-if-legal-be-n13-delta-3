@@ -18,6 +18,7 @@ export const apiLawyerSelfProofList = new HttpApi({
 	handler: async ({ req }) => {
 		const authPayload = userAuth(req, [AuthRole.LAWYER])
 		const { lawyerId } = await getUserOrLawyerFromAuth(authPayload)
+		let fileNames: any[] = []
 
 		const [lawyer] = await listLawyer({ filter: { id: lawyerId } })
 		if (!lawyer) throw new UnprocessableEntityError("Lawyer not found")
@@ -28,10 +29,11 @@ export const apiLawyerSelfProofList = new HttpApi({
 		const dirPath = getLawyerProofDirPath(lawyer.id)
 		try {
 			await createDirIfNotExists(dirPath)
-			return await getDirFiles(dirPath)
+			fileNames = await getDirFiles(dirPath)
 		} catch (error) {
 			Sentry.captureException(error)
 			return []
 		}
+		return fileNames
 	},
 })
