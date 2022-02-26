@@ -73,7 +73,7 @@ describe(`API: ${endpoint}`, () => {
 		["with paper-type filter", { withPaperTypeId: true }],
 	]
 
-	for (const role of [AuthRole.USER, AuthRole.LAWYER]) {
+	for (const role of [AuthRole.USER]) {
 		for (const [desc, filter] of possibilities) {
 			it(`Success for role(${role}) ${desc}`, async () => {
 				const id = role === AuthRole.USER ? user.id : lawyer.userId
