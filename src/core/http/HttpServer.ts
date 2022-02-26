@@ -13,7 +13,6 @@ export class HttpServer {
 		this.server = express()
 		this.port = port
 		if (process.env.NODE_ENV !== "development") {
-			console.log('--process.env.NODE_ENV',process.env.NODE_ENV)
 			Sentry.init({
 				dsn: "https://2429f4f1273947d0b2c30abfaec8981a@o952669.ingest.sentry.io/6233609",
 				integrations: [
