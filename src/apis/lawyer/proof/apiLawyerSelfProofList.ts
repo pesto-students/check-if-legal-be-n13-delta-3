@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node"
 import { AuthRole } from "../../../core/enums"
 import {
 	ForbiddenError,

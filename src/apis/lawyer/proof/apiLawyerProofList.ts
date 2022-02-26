@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node"
 import { z } from "zod"
 import { AuthRole } from "../../../core/enums"
 import { HttpApi, HttpMethod, UnprocessableEntityError } from "../../../core/http"
@@ -22,6 +23,7 @@ export const apiLawyerProofList = new HttpApi({
 			const dirPath = getLawyerProofDirPath(lawyer.id)
 			fileNames = await getDirFiles(dirPath)
 		} catch (err) {
+			Sentry.captureException(err);
 			return []
 		}
 

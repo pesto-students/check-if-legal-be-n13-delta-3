@@ -1,4 +1,5 @@
 import { z } from "zod"
+import * as Sentry from "@sentry/node"
 import { AuthRole } from "../../../core/enums"
 import { HttpApi, HttpMethod, UnprocessableEntityError } from "../../../core/http"
 import { userAuth } from "../../../helpers/auth/userAuth"
