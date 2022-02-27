@@ -15,6 +15,7 @@ import { encryptFile } from "../../../helpers/encrypt"
 import { saveFile } from "../../../helpers/fs"
 import { listReview } from "../../../services/review/listReview"
 import { updateReview } from "../../../services/review/updateReview"
+import { upsertReviewDocument } from "../../../services/reviewDocument/upsertReviewDocument"
 
 const paramsSchema = z.object({ reviewId: z.string() }).strict()
 
@@ -58,6 +59,7 @@ export const apiReviewDocumentUpload = new HttpApi({
 			const encryptedFile = await encryptFile(file.path)
 			const dest = getReviewDocsDirPath(reviewId)
 			await saveFile(dest, encryptedFile, file.originalname)
+			await upsertReviewDocument({ reviewId, documentName: file.originalname })
 		}
 
 		if (review.status === ReviewStatus.INITIAL) {

@@ -6,6 +6,7 @@ import { userAuth } from "../../../helpers/auth/userAuth"
 import { getReviewDocsDirPath } from "../../../helpers/directoryPaths"
 import { deleteFile } from "../../../helpers/fs"
 import { listReview } from "../../../services/review/listReview"
+import { deleteReviewDocument } from "../../../services/reviewDocument/deleteReviewDocument"
 import { getUserOrLawyerFromAuth } from "../../../services/user/getUserOrLawyerFromAuth"
 
 export const apiReviewDocumentDelete = new HttpApi({
@@ -19,6 +20,10 @@ export const apiReviewDocumentDelete = new HttpApi({
 		const reviewId = +params.reviewId
 		const [review] = await listReview({ filter: { id: reviewId, userId, lawyerId } })
 		if (!review) throw new UnprocessableEntityError("Review not found")
+
+		await deleteReviewDocument({
+			filter: { reviewId, documentName: params.fileName },
+		})
 
 		const dirPath = getReviewDocsDirPath(review.id)
 		const filePath = path.join(dirPath, params.fileName)
