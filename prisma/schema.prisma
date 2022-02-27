@@ -140,6 +140,16 @@ model Review {
     rating              ReviewRating?
     payment             ReviewPayment?
     payout              ReviewPayout?
+    documents           ReviewDocument[]
+}
+
+model ReviewDocument {
+    id           Int      @id @default(autoincrement())
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    reviewId     Int
+    review       Review   @relation(fields: [reviewId], references: [id])
+    documentName String   @db.VarChar(100)
 }
 
 model ReviewRating {
