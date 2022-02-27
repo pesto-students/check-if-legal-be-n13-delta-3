@@ -1,11 +1,12 @@
 import dotenv from "dotenv"
+import path from "path"
 
-dotenv.config()
+dotenv.config({ path: path.join(__dirname, "..", "..", ".env") })
 
 export default {
 	server: {
 		environment: process.env.NODE_ENV || "development",
-		port: (process.env.SERVER_PORT && +process.env.SERVER_PORT) || 3000,
+		port: (process.env.PORT && +process.env.PORT) || 3000,
 		name: process.env.SERVER_NAME || "server_name",
 	},
 	database: {
