@@ -10,7 +10,10 @@ export default {
 		name: process.env.SERVER_NAME || "server_name",
 	},
 	database: {
-		url: process.env.DATABASE_URL ?? "postgresql://postgres@localhost:5432/postgres",
+		url:
+			process.env.HEROKU_POSTGRESQL_PURPLE_URL ??
+			process.env.DATABASE_URL ??
+			"postgresql://postgres@localhost:5432/postgres",
 	},
 	jwt: {
 		secret: process.env.JWT_SECRET || "secret",
