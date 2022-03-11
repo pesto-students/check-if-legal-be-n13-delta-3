@@ -8,6 +8,8 @@ export async function truncateDatabase() {
 	await prisma.reviewFeedback.deleteMany()
 	await prisma.reviewPayment.deleteMany()
 	await prisma.reviewRating.deleteMany()
+	await prisma.reviewDocument.deleteMany()
+	await prisma.review.deleteMany()
 	await prisma.review.deleteMany()
 	await prisma.lawyer.deleteMany()
 	await prisma.user.deleteMany()
