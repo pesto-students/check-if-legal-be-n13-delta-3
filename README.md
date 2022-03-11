@@ -23,7 +23,7 @@ For front-end repository <a href="https://github.com/pesto-students/check-if-leg
 
 # Demo
 
-[Live Demo](https://api.checkiflegal.in/)
+[Live Demo](https://checkiflegal.in/)
 
 <br/>
 
